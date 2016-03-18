@@ -3,7 +3,7 @@
 #include "stm32f0xx_rcc.h"
 #include "stm32f0xx_adc.h"
 #include "display.h"
-
+#include "f0_usart.h"
 
 void adc_convert(void){
 		uint16_t ADC1ConvertedValue;
@@ -14,9 +14,11 @@ void adc_convert(void){
  
 	    /* Get ADC1 converted data */
 		ADC1ConvertedValue = ADC_GetConversionValue(ADC1);
-		update_rawADC(USART1, ADC1ConvertedValue);		//ADC value 0-4096
-		update_degF(USART1, ADC1ConvertedValue/1.64);	//degF 0-2500F
-		update_degC(USART1, ADC1ConvertedValue/3);		//degC 0-1370C
+		//update_rawADC(USART2, ADC1ConvertedValue);		//ADC value 0-4096
+		//update_degF(USART2, ADC1ConvertedValue/1.64);	//degF 0-2500F
+		//update_degC(USART2, ADC1ConvertedValue/3);		//degC 0-1370C
+		USART_PUT_TEMPF(USART2, ADC1ConvertedValue/1.64);
+		USART_PUT_TEMPC(USART2, ADC1ConvertedValue/3);
 		
 		if (ADC1ConvertedValue > 4000)
 		{

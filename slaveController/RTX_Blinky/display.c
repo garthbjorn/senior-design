@@ -67,9 +67,7 @@ void update_degC(USART_TypeDef* USARTx, int16_t C){
 }
 
 void display_init(USART_TypeDef* USARTx){
-	VT100_CLEAR;
-	VT100_HOME;
-	VT100_HIDE_CURSOR;
+	VT100_INIT;
 	
 	USART_puts(USARTx, "|''''''''''''''''''''''''''''''''''|\n\r");
 	USART_puts(USARTx, "|=== AGP  Slave Controller Test ===|\n\r");

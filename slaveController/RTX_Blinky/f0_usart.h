@@ -4,9 +4,9 @@
 
 #include "stm32f0xx.h"
 
-void USART_Output_Configure();
-void USART_Configure();
-void usart_f0_init();
+void USART_Output_Configure(void);
+void USART_Configure(void);
+void usart_f0_init(void);
 void USART_PUT_TEMPC(USART_TypeDef* USARTx, uint32_t t);
 void USART_PUT_TEMPF(USART_TypeDef* USARTx, uint32_t t);
 void USART_putnum(USART_TypeDef* USARTx, uint32_t x);

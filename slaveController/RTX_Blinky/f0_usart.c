@@ -15,9 +15,8 @@ void usart_f0_init()
 void USART_Configure()
 {
 	USART_InitTypeDef USART_InitStructure;
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 	
-	//USART_InitTypeDef USART_InitStructure;
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 
 	USART_InitStructure.USART_BaudRate = 9600;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
@@ -25,9 +24,9 @@ void USART_Configure()
 	USART_InitStructure.USART_Parity = USART_Parity_No;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	USART_Init(USART1, &USART_InitStructure);
+	USART_Init(USART2, &USART_InitStructure);
   
-	USART_Cmd(USART1, ENABLE);
+	USART_Cmd(USART2, ENABLE);
 }
 
 void USART_Output_Configure()
@@ -36,10 +35,10 @@ void USART_Output_Configure()
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
   
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_1);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_1);
   
-	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_9 | GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_2 | GPIO_Pin_3;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -48,13 +47,25 @@ void USART_Output_Configure()
 }
 
 void USART_PUT_TEMPC(USART_TypeDef* USARTx, uint32_t t){
-		USART_puts(USARTx, "tc");
+		USART_putchar(USARTx, 'c');
+		if(t<1000)
+			USART_putnum(USARTx, 0);
+		if(t<100)
+			USART_putnum(USARTx, 0);
+		if(t<10)
+			USART_putnum(USARTx, 0);
 		USART_putnum(USARTx, t);
 		USART_putchar(USARTx, '\n');
 }	
 
 void USART_PUT_TEMPF(USART_TypeDef* USARTx, uint32_t t){
-		USART_puts(USARTx, "tf");
+		USART_putchar(USARTx, 'f');
+		if(t<1000)
+			USART_putnum(USARTx, 0);
+		if(t<100)
+			USART_putnum(USARTx, 0);
+		if(t<10)
+			USART_putnum(USARTx, 0);
 		USART_putnum(USARTx, t);
 		USART_putchar(USARTx, '\n');
 }	
@@ -88,6 +99,11 @@ void USART_puts(USART_TypeDef* USARTx, volatile char * s) {
 	}
 }
 
+//This function handles USART1 global interrupt request.
+void USART2_IRQHandler(void)
+{
+	
+}
 
 
 
@@ -181,3 +197,4 @@ void USART_puts(USART_TypeDef* USARTx, volatile char * s) {
 			//USART_SendData(USART2, 'X');
 	//}
 //}
+

@@ -13,11 +13,11 @@
 #include "f0_usart.h"
 
 
-#define VT100_CLEAR						USART_puts(USART1,"\x1b[2J");
-#define VT100_HOME						USART_puts(USART1,"\x1b[H");
-#define VT100_HIDE_CURSOR			USART_puts(USART1,"\x1b[?25l");
+#define VT100_CLEAR						USART_puts(USART2,"\x1b[2J");
+#define VT100_HOME						USART_puts(USART2,"\x1b[H");
+#define VT100_HIDE_CURSOR			USART_puts(USART2,"\x1b[?25l");
 #define VT100_INIT						{VT100_HOME;VT100_CLEAR;VT100_HIDE_CURSOR;}
-#define VT100_POS(row,col)		USART_puts(USART1,"\x1b[" #row ";" #col "H")
+#define VT100_POS(row,col)		USART_puts(USART2,"\x1b[" #row ";" #col "H")
 
 //#define VT100_UP_RIGHT(row,col)		USART_puts(USART1,"\x1b[%dA\033[%dD",row,col);
 //#define VT100_UP_LEFT(row,col)		USART_puts(USART1,"\x1b[%dA\033[%dC",row,col);
