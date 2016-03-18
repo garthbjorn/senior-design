@@ -78,6 +78,8 @@ void VT100_init(USART_TypeDef* USARTx){
 	USART_puts(USARTx, "| degr. F =                        |\n\r");
 	USART_puts(USARTx, "|                                  |\n\r");
 	USART_puts(USARTx, "| degr. C =                        |\n\r");
+	USART_puts(USARTx, "|                                  |\n\r");
+	USART_puts(USARTx, "|  USART1 =                        |\n\r");
 	USART_puts(USARTx, "|__________________________________|\n\r");
 	
 	VT100_HOME;
