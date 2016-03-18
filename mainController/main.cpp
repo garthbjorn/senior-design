@@ -21,7 +21,8 @@ int main()
       log->printf("Failed to initialize the board, got error %d\r\n", err);
       break;
     }
-    
+
+
     log->printf("\n\nHello World!\n\n");
     
     // Create the HAL for emWin
@@ -49,6 +50,7 @@ int main()
     while(1)
     {
     	GUI_Delay(10);
+        GUI_ExecCreatedDialog(mainWin);
     }
     } while(false);
   

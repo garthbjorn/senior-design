@@ -31,11 +31,14 @@
 **********************************************************************
 */
 #define ID_WINDOW_0    (GUI_ID_USER + 0x03)
-#define ID_IMAGE_0    (GUI_ID_USER + 0x04)
 #define ID_BUTTON_0    (GUI_ID_USER + 0x07)
 #define ID_BUTTON_1    (GUI_ID_USER + 0x08)
-#define ID_SLIDER_0    (GUI_ID_USER + 0x09)
-#define ID_GRAPH_0    (GUI_ID_USER + 0x0A)
+#define ID_IMAGE_0    (GUI_ID_USER + 0x0B)
+#define ID_TEXT_0    (GUI_ID_USER + 0x0C)
+#define ID_RADIO_0    (GUI_ID_USER + 0x0E)
+#define ID_EDIT_0    (GUI_ID_USER + 0x0F)
+#define ID_TEXT_1    (GUI_ID_USER + 0x10)
+#define ID_EDIT_1    (GUI_ID_USER + 0x11)
 
 #define ID_IMAGE_0_IMAGE_0    0x00
 
@@ -195,11 +198,14 @@ static U8 _acImage_0[5495] = {
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 800, 480, 0, 0x0, 0 },
-  { IMAGE_CreateIndirect, "Image", ID_IMAGE_0, 320, 0, 160, 93, 0, IMAGE_CF_AUTOSIZE, 0 },
-  { BUTTON_CreateIndirect, "startButton", ID_BUTTON_0, 60, 200, 200, 100, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "stopButton", ID_BUTTON_1, 540, 200, 200, 100, 0, 0x0, 0 },
-  { SLIDER_CreateIndirect, "Slider", ID_SLIDER_0, 230, 120, 340, 50, 0, 0x0, 0 },
-  { GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 150, 320, 500, 150, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "startButton", ID_BUTTON_0, 10, 110, 150, 50, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "stopButton", ID_BUTTON_1, 10, 180, 150, 50, 0, 0x0, 0 },
+  { IMAGE_CreateIndirect, "Image", ID_IMAGE_0, 0, 0, 160, 95, 0, 0, 0 },
+  { TEXT_CreateIndirect, "Text", ID_TEXT_0, 405, 275, 100, 20, 0, 0x64, 0 },
+  { RADIO_CreateIndirect, "Radio", ID_RADIO_0, 600, 10, 150, 200, 100, 0x140a, 0 },
+  { EDIT_CreateIndirect, "Edit", ID_EDIT_0, 360, 294, 150, 30, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text", ID_TEXT_1, 405, 334, 80, 20, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit", ID_EDIT_1, 360, 355, 150, 30, 0, 0x64, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -224,8 +230,11 @@ static const void * _GetImageById(U32 Id, U32 * pSize) {
 }
 
 // USER START (Optionally insert additional static code)
+static PwmOut pwm(p7);
+static Serial slave(p12, p13);
+static char tempC [] = "0000";
+static char tempF [] = "0000";
 // USER END
-static PwmOut motor (p1);
 
 /*********************************************************************
 *
@@ -234,11 +243,18 @@ static PwmOut motor (p1);
 static void _cbDialog(WM_MESSAGE * pMsg) {
   const void * pData;
   WM_HWIN      hItem;
+  WM_HWIN		hDlg;
+  int     		Sel;
   U32          FileSize;
   int          NCode;
   int          Id;
+  hDlg = pMsg->hWin;
   // USER START (Optionally insert additional variables)
   // USER END
+  hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
+  EDIT_SetText(hItem, tempC);
+  hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_1);
+  EDIT_SetText(hItem, tempF);
 
   switch (pMsg->MsgId) {
   case WM_INIT_DIALOG:
@@ -246,13 +262,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'Window'
     //
     hItem = pMsg->hWin;
-    WINDOW_SetBkColor(hItem, 0x0028BD37);
-    //
-    // Initialization of 'Image'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_IMAGE_0);
-    pData = _GetImageById(ID_IMAGE_0_IMAGE_0, &FileSize);
-    IMAGE_SetPNG(hItem, pData, FileSize);
+    WINDOW_SetBkColor(hItem, 0x001E8A28);
     //
     // Initialization of 'startButton'
     //
@@ -265,6 +275,52 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_1);
     BUTTON_SetText(hItem, "STOP");
     BUTTON_SetFont(hItem, GUI_FONT_32B_ASCII);
+    //
+    // Initialization of 'Image'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_IMAGE_0);
+    pData = _GetImageById(ID_IMAGE_0_IMAGE_0, &FileSize);
+    IMAGE_SetPNG(hItem, pData, FileSize);
+    //
+    // Initialization of 'Text'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
+    TEXT_SetFont(hItem, GUI_FONT_20F_ASCII);
+    TEXT_SetText(hItem, "Temp C");
+    //
+    // Initialization of 'Radio'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_RADIO_0);
+    RADIO_SetText(hItem, "10%", 0);
+    RADIO_SetText(hItem, "20%", 1);
+    RADIO_SetText(hItem, "30%", 2);
+    RADIO_SetText(hItem, "40%", 3);
+    RADIO_SetText(hItem, "50%", 4);
+    RADIO_SetText(hItem, "60%", 5);
+    RADIO_SetText(hItem, "70%", 6);
+    RADIO_SetText(hItem, "80%", 7);
+    RADIO_SetText(hItem, "90%", 8);
+    RADIO_SetText(hItem, "100%", 9);
+    //
+    // Initialization of 'Edit'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
+    EDIT_SetText(hItem, tempC);
+    EDIT_SetFont(hItem, GUI_FONT_32B_1);
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of 'Text'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
+    TEXT_SetFont(hItem, GUI_FONT_20F_ASCII);
+    TEXT_SetText(hItem, "Temp F");
+    //
+    // Initialization of 'Edit'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_1);
+    EDIT_SetText(hItem, tempF);
+    EDIT_SetFont(hItem, GUI_FONT_32B_ASCII);
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     // USER START (Optionally insert additional code for further widget initialization)
     // USER END
     break;
@@ -275,8 +331,9 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     case ID_BUTTON_0: // Notifications sent by 'startButton'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
-    	 motor.period(.001);
-    	 motor=.1;
+        // USER START (Optionally insert code for reacting on notification message)
+    	  pwm.period(.01);
+    	// USER END
         break;
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -290,7 +347,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
-        // USER END
+    	  pwm = 0;
+    	  // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -300,7 +358,78 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       // USER END
       }
       break;
-    case ID_SLIDER_0: // Notifications sent by 'Slider'
+    case ID_RADIO_0: // Notifications sent by 'Radio'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+          hItem = WM_GetDialogItem(hDlg, ID_RADIO_0);
+          Sel   = RADIO_GetValue(hItem);
+          switch(Sel){
+          case 0:
+        	  pwm = .1;
+        	  break;
+          case 1:
+        	  pwm = .2;
+        	  break;
+          case 2:
+        	  pwm = .3;
+        	  break;
+          case 3:
+        	  pwm = .4;
+        	  break;
+          case 4:
+        	  pwm = .5;
+        	  break;
+          case 5:
+        	  pwm = .6;
+        	  break;
+          case 6:
+        	  pwm = .7;
+        	  break;
+          case 7:
+        	  pwm = .8;
+        	  break;
+          case 8:
+        	  pwm = .9;
+        	  break;
+          case 9:
+        	  pwm = 1;
+        	  break;
+
+          }
+    	  // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_EDIT_0: // Notifications sent by 'Edit'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_EDIT_1: // Notifications sent by 'Edit'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -329,7 +458,28 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     break;
   }
 }
+void uartCb(){
+	int c = slave.getc();
+	static int far;
+	if(c =='f')
+	{
+		far = 1;
+	}
+	if(c == 'c')
+	{
+		far = 0;
+	}
+	if(far)
+	{
+		slave.gets(tempF,4);
 
+	}
+	else
+	{
+		slave.gets(tempC,4);
+	}
+
+}
 /*********************************************************************
 *
 *       Public code
@@ -343,7 +493,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 WM_HWIN CreateWindow(void);
 WM_HWIN CreateWindow(void) {
   WM_HWIN hWin;
-
+  slave.attach(&uartCb);
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
   return hWin;
 }
