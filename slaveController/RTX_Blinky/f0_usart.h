@@ -7,7 +7,8 @@
 void USART_Output_Configure();
 void USART_Configure();
 void usart_f0_init();
-void USART_PUT_TEMP(USART_TypeDef* USARTx, uint32_t t);
+void USART_PUT_TEMPC(USART_TypeDef* USARTx, uint32_t t);
+void USART_PUT_TEMPF(USART_TypeDef* USARTx, uint32_t t);
 void USART_putnum(USART_TypeDef* USARTx, uint32_t x);
 void USART_putchar(USART_TypeDef* USARTx, char c);
 void USART_puts(USART_TypeDef* USARTx, volatile char * s);

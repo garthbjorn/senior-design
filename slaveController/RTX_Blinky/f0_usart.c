@@ -47,8 +47,14 @@ void USART_Output_Configure()
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
-void USART_PUT_TEMP(USART_TypeDef* USARTx, uint32_t t){
-		USART_putchar(USARTx, 't');
+void USART_PUT_TEMPC(USART_TypeDef* USARTx, uint32_t t){
+		USART_puts(USARTx, "tc");
+		USART_putnum(USARTx, t);
+		USART_putchar(USARTx, '\n');
+}	
+
+void USART_PUT_TEMPF(USART_TypeDef* USARTx, uint32_t t){
+		USART_puts(USARTx, "tf");
 		USART_putnum(USARTx, t);
 		USART_putchar(USARTx, '\n');
 }	

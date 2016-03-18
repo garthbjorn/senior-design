@@ -1,6 +1,5 @@
 --cpu Cortex-M0
 ".\flash\rtx_blinky.o"
-".\flash\vt100.o"
 ".\flash\f0_usart.o"
 ".\flash\stm32f0xx_adc.o"
 ".\flash\stm32f0xx_gpio.o"
@@ -8,6 +7,7 @@
 ".\flash\stm32f0xx_tim.o"
 ".\flash\stm32f0xx_usart.o"
 ".\flash\f0_adc.o"
+".\flash\display.o"
 ".\flash\buttons_stm32f051-discovery.o"
 ".\flash\led_stm32f051-discovery.o"
 "C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\RTOS\RTX\LIB\ARM\RTX_CM0.lib"
