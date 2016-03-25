@@ -9,12 +9,10 @@
 #include "vt100.h"
 #include "display.h"
 
-//void Delay()
-//{
-//	int i;
-//	for (i = 0; i < 1000000; i++)
-//		asm("nop");
-//}
+void Delay(__IO uint32_t nCount) {
+  while(nCount--) {
+  }
+}
 
 uint16_t TimerPeriod = 0;
 uint16_t Channel1Pulse = 0, Channel2Pulse = 0, Channel3Pulse = 0, Channel4Pulse = 0;
@@ -86,11 +84,34 @@ int main()
 {
 	adc_f0_init();
 	usart_f0_init();
-	//display_init(USART2);
-	PWM_Config();
+//	VT100_INIT;
+//	display_init(USART2);
+//	PWM_Config();
  
 	while (1)
 	{
+		//Delay(5000000); //Magic speed 10000+
+		
 		adc_convert();
+		//USART_putchar(USART2, USART_ReceiveData(USART2));
+		//USART_SendData(USART2, USART_ReceiveData(USART2));
+//		USART_putchar(USART2, 'f');
+		//Delay(5000000);
+//		USART_putchar(USART2, getRx());
+		//USART_PUT_TEMPF(USART2, ADCvalue());
+//		adc_convert();
+//		USART_putchar(USART1, 'c');
+//		Delay(5000000);
+		//USART_PUT_TEMPC(USART2, ADCvalue());
+//		USART_putchar(USART2, getRx());
+		
+		//if(USART_GetITStatus(USART2, USART_IT_RXNE)) {
+		//	char t = USART2->RDR;
+		//	USART_putchar(USART2, t);
+		//}
+		
+		//Delay(5000000);
+		//USART_puts(USART2, "string");
+		//USART_SendData(USART2, USART2->RDR);
 	}
 }

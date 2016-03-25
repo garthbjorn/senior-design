@@ -381,11 +381,6 @@
               <FilePath>.\RTX_Blinky.c</FilePath>
             </File>
             <File>
-              <FileName>vt100.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\vt100.c</FilePath>
-            </File>
-            <File>
               <FileName>f0_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\f0_usart.c</FilePath>
@@ -459,6 +454,31 @@
               <FileName>stm32f0xx_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\stm32f0xx_conf.h</FilePath>
+            </File>
+            <File>
+              <FileName>f0_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\f0_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>display.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\display.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\stm32f0xx_misc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_misc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\stm32f0xx_misc.h</FilePath>
+            </File>
+            <File>
+              <FileName>f0_adc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\f0_adc.h</FilePath>
             </File>
           </Files>
         </Group>

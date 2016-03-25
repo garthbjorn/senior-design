@@ -31,12 +31,12 @@ void update_degF(USART_TypeDef* USARTx, uint16_t F){
 	USART_putnum(USARTx, F);
 	VT100_HOME;
 	USART_puts(USARTx, "\x1b[5B\x1b[26C");
-	if(F<1000)
-		USART_puts(USARTx, " ");
-	if(F<100)
-		USART_puts(USARTx, " ");
-	if(F<10)
-		USART_puts(USARTx, " ");
+//	if(F<1000)
+//		USART_puts(USARTx, " ");
+//	if(F<100)
+//		USART_puts(USARTx, " ");
+//	if(F<10)
+//		USART_puts(USARTx, " ");
 	USART_PUT_TEMPF(USARTx, F);
 	VT100_HOME;
 }
@@ -56,12 +56,12 @@ void update_degC(USART_TypeDef* USARTx, int16_t C){
 	USART_putnum(USARTx, C);
 	VT100_HOME;
 	USART_puts(USARTx, "\x1b[7B\x1b[26C");
-	if(C<1000)
-		USART_puts(USARTx, " ");
-	if(C<100)
-		USART_puts(USARTx, " ");
-	if(C<10)
-		USART_puts(USARTx, " ");
+//	if(C<1000)
+//		USART_puts(USARTx, " ");
+//	if(C<100)
+//		USART_puts(USARTx, " ");
+//	if(C<10)
+//		USART_puts(USARTx, " ");
 	USART_PUT_TEMPC(USARTx, C);
 	VT100_HOME;
 }
