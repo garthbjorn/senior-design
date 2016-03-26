@@ -198,8 +198,8 @@ static U8 _acImage_0[5495] = {
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 800, 480, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "startButton", ID_BUTTON_0, 10, 110, 150, 50, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "stopButton", ID_BUTTON_1, 10, 180, 150, 50, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "startButton", ID_BUTTON_0, 10, 100, 300, 100, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "stopButton", ID_BUTTON_1, 10, 300, 300, 100, 0, 0x0, 0 },
   { IMAGE_CreateIndirect, "Image", ID_IMAGE_0, 0, 0, 160, 95, 0, 0, 0 },
   { TEXT_CreateIndirect, "Text", ID_TEXT_0, 405, 275, 100, 20, 0, 0x64, 0 },
   { RADIO_CreateIndirect, "Radio", ID_RADIO_0, 600, 10, 150, 200, 100, 0x140a, 0 },
@@ -231,9 +231,7 @@ static const void * _GetImageById(U32 Id, U32 * pSize) {
 
 // USER START (Optionally insert additional static code)
 static PwmOut pwm(p7);
-static Serial slave(p12, p13);
-static char tempC [] = "0000";
-static char tempF [] = "0000";
+
 // USER END
 
 /*********************************************************************
@@ -251,10 +249,6 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
   hDlg = pMsg->hWin;
   // USER START (Optionally insert additional variables)
   // USER END
-  hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
-  EDIT_SetText(hItem, tempC);
-  hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_1);
-  EDIT_SetText(hItem, tempF);
 
   switch (pMsg->MsgId) {
   case WM_INIT_DIALOG:
@@ -305,7 +299,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'Edit'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
-    EDIT_SetText(hItem, tempC);
+
     EDIT_SetFont(hItem, GUI_FONT_32B_1);
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     //
@@ -318,7 +312,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'Edit'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_1);
-    EDIT_SetText(hItem, tempF);
+
     EDIT_SetFont(hItem, GUI_FONT_32B_ASCII);
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     // USER START (Optionally insert additional code for further widget initialization)
@@ -458,28 +452,6 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     break;
   }
 }
-void uartCb(){
-	int c = slave.getc();
-	static int far;
-	if(c =='f')
-	{
-		far = 1;
-	}
-	if(c == 'c')
-	{
-		far = 0;
-	}
-	if(far)
-	{
-		slave.gets(tempF,4);
-
-	}
-	else
-	{
-		slave.gets(tempC,4);
-	}
-
-}
 /*********************************************************************
 *
 *       Public code
@@ -493,7 +465,6 @@ void uartCb(){
 WM_HWIN CreateWindow(void);
 WM_HWIN CreateWindow(void) {
   WM_HWIN hWin;
-  slave.attach(&uartCb);
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
   return hWin;
 }
