@@ -3,16 +3,48 @@
 #include "stm32f0xx_usart.h"
 #include "stm32f0xx_tim.h"
 #include "stm32f0xx_rcc.h"
+#include "stm32f0xx_misc.h"
 #include <stdio.h>
 #include "f0_usart.h"
+#include "f0_adc.h"
+#include "display.h"
 
 void usart_f0_init()
 {
-	USART_Configure();
-	USART_Output_Configure();
+	NVIC_USART_Configure();
+	//USART1_Configure();
+	USART2_Configure();
+	USART_GPIO();
 }
 
-void USART_Configure()
+void NVIC_USART_Configure(){
+	NVIC_InitTypeDef NVIC_InitStructure;
+	
+	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+}
+
+void USART1_Configure()
+{
+	USART_InitTypeDef USART_InitStructure;
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+
+	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(USART1, &USART_InitStructure);
+  
+	USART_Cmd(USART1, ENABLE);
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+}
+
+void USART2_Configure()
 {
 	USART_InitTypeDef USART_InitStructure;
 	
@@ -27,18 +59,23 @@ void USART_Configure()
 	USART_Init(USART2, &USART_InitStructure);
   
 	USART_Cmd(USART2, ENABLE);
+	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 }
 
-void USART_Output_Configure()
+void USART_GPIO()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
-  
+	
+  //USART2
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_1);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_1);
+	//USART1
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_1);
   
-	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_2 | GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_9 | GPIO_Pin_10;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -47,7 +84,7 @@ void USART_Output_Configure()
 }
 
 void USART_PUT_TEMPC(USART_TypeDef* USARTx, uint32_t t){
-		USART_putchar(USARTx, 'c');
+		//USART_putchar(USARTx, 'c');
 		if(t<1000)
 			USART_putnum(USARTx, 0);
 		if(t<100)
@@ -59,7 +96,7 @@ void USART_PUT_TEMPC(USART_TypeDef* USARTx, uint32_t t){
 }	
 
 void USART_PUT_TEMPF(USART_TypeDef* USARTx, uint32_t t){
-		USART_putchar(USARTx, 'f');
+		//USART_putchar(USARTx, 'f');
 		if(t<1000)
 			USART_putnum(USARTx, 0);
 		if(t<100)
@@ -89,7 +126,8 @@ void USART_putnum(USART_TypeDef* USARTx, uint32_t x)
 
 void USART_putchar(USART_TypeDef* USARTx, char c)
 {
-	while (!(USARTx->ISR & 0x00000040));
+	//while (!(USARTx->ISR & 0x00000040));
+	while(USART_GetFlagStatus(USARTx,USART_FLAG_TXE)!=SET);
 		USART_SendData(USARTx, c);
 }
 
@@ -99,10 +137,53 @@ void USART_puts(USART_TypeDef* USARTx, volatile char * s) {
 	}
 }
 
-//This function handles USART1 global interrupt request.
+//char Rx_indx, Rx_data[2], Rx_Buffer[100], Transfer_cplt;
+#define MAX_STRLEN 12 // this is the maximum string length of our string in characters
+volatile char received_string[MAX_STRLEN+1]; // this will hold the recieved string
+
+char received;
+
+char getRx(void){
+	return received;
+}
+
+//This function handles USART2 global interrupt request.
 void USART2_IRQHandler(void)
-{
+{	
+	//USART_putchar(USART2, USART2->RDR);
 	
+	
+	// check if the USART1 receive interrupt flag was set
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET){
+		//(USART2->ISR & USART_FLAG_RXNE) != (uint16_t)RESET){
+		
+		//static uint8_t cnt = 0; // this counter is used to determine the string length
+		//char t = USART2->RDR; // the character from the USART1 data register is saved in t
+		
+//		received = USART_ReceiveData(USART2);
+		
+		//USART_putchar(USART2, received);
+		if(USART_ReceiveData(USART2) == 'f'){
+				USART_PUT_TEMPF(USART2, ADCvalue()/1.64);	//degF 0-2500F
+		}
+		if(USART_ReceiveData(USART2) == 'c'){
+				USART_PUT_TEMPC(USART2, ADCvalue()/3);		//degC 0-1370C
+		}
+		
+//		USART_putchar(USART2, USART_ReceiveData(USART2));
+		
+		/* check if the received character is not the LF character (used to determine end of string) 
+		 * or the if the maximum string length has been been reached 
+		 */
+//		if( (t != '\n') && (cnt < MAX_STRLEN) ){ 
+//			received_string[cnt] = t;
+//			cnt++;
+//		}
+//		else{ // otherwise reset the character counter and print the received string
+//			cnt = 0;
+//			USART_puts(USART2, received_string);
+//		}
+	}
 }
 
 
@@ -147,54 +228,3 @@ void USART2_IRQHandler(void)
 //
 	//return ch;
 //}
-
-
-
-
-///* USART2 PA.2 Tx, PA.3 Rx STM32F0-Discovery sourcer32@gmail.com */
- //
-//#include "stm32f0xx.h"
-//#include <stm32f0xx_gpio.h>
-//#include <stm32f0xx_rcc.h>
-//#include <stm32f0xx_usart.h>
-////#include "stm32f0_discovery.h"
- //
-//int main(void)
-//{
-	//USART_InitTypeDef USART_InitStructure;
-	//GPIO_InitTypeDef GPIO_InitStructure;
- //
-	//RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
- //
-	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
- //
-	//GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_1);
-	//GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_1);
- //
-    ///* Configure USART2 pins:  Rx and Tx ----------------------------*/
-	//GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_2 | GPIO_Pin_3;
-	//GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	//GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	//GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	//GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	//GPIO_Init(GPIOA, &GPIO_InitStructure);
- //
-	//USART_InitStructure.USART_BaudRate = 9600;
-	//USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-	//USART_InitStructure.USART_StopBits = USART_StopBits_1;
-	//USART_InitStructure.USART_Parity = USART_Parity_No;
-	//USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-	//USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	//USART_Init(USART2, &USART_InitStructure);
- //
-	//USART_Cmd(USART2, ENABLE);
-	//USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
- //
-	//while (1)
-	//{
-		////while (USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
- //
-			//USART_SendData(USART2, 'X');
-	//}
-//}
-
