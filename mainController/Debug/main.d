@@ -129,8 +129,7 @@ main.o main.d: ../main.cpp \
  C:\Users\Garth\Documents\senior-design\mainController\DMemWin\emwin\emWin_header/SPINBOX.h \
  C:\Users\Garth\Documents\senior-design\mainController\DMemWin\emwin\emWin_header/TEXT.h \
  C:\Users\Garth\Documents\senior-design\mainController\DMemWin\emwin\emWin_header/TREEVIEW.h \
- C:\Users\Garth\Documents\senior-design\mainController\DMemWin\emwin\emWin_header/KNOB.h \
- C:\Users\Garth\Documents\senior-design\mainController/Interface.h
+ C:\Users\Garth\Documents\senior-design\mainController\DMemWin\emwin\emWin_header/KNOB.h
 
 C:\Users\Garth\Documents\senior-design\mainController\DMSupport\mbed-src\api/mbed.h:
 
@@ -393,5 +392,3 @@ C:\Users\Garth\Documents\senior-design\mainController\DMemWin\emwin\emWin_header
 C:\Users\Garth\Documents\senior-design\mainController\DMemWin\emwin\emWin_header/TREEVIEW.h:
 
 C:\Users\Garth\Documents\senior-design\mainController\DMemWin\emwin\emWin_header/KNOB.h:
-
-C:\Users\Garth\Documents\senior-design\mainController/Interface.h:

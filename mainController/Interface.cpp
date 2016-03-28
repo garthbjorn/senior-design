@@ -22,7 +22,6 @@
 // USER END
 
 #include "DIALOG.h"
-#include "mbed.h"
 
 /*********************************************************************
 *
@@ -30,17 +29,29 @@
 *
 **********************************************************************
 */
-#define ID_WINDOW_0    (GUI_ID_USER + 0x03)
-#define ID_BUTTON_0    (GUI_ID_USER + 0x07)
-#define ID_BUTTON_1    (GUI_ID_USER + 0x08)
-#define ID_IMAGE_0    (GUI_ID_USER + 0x0B)
-#define ID_TEXT_0    (GUI_ID_USER + 0x0C)
-#define ID_RADIO_0    (GUI_ID_USER + 0x0E)
-#define ID_EDIT_0    (GUI_ID_USER + 0x0F)
-#define ID_TEXT_1    (GUI_ID_USER + 0x10)
-#define ID_EDIT_1    (GUI_ID_USER + 0x11)
+#define ID_WINDOW_0     (GUI_ID_USER + 0x03)
+#define ID_BUTTON_0     (GUI_ID_USER + 0x07)
+#define ID_BUTTON_1     (GUI_ID_USER + 0x08)
+#define ID_IMAGE_0     (GUI_ID_USER + 0x12)
+#define ID_TEXT_0     (GUI_ID_USER + 0x15)
+#define ID_BUTTON_2     (GUI_ID_USER + 0x17)
+#define ID_GRAPH_0     (GUI_ID_USER + 0x19)
+#define ID_EDIT_0     (GUI_ID_USER + 0x1A)
+#define ID_TEXT_1     (GUI_ID_USER + 0x1B)
+#define ID_TEXT_2     (GUI_ID_USER + 0x1C)
+#define ID_TEXT_3     (GUI_ID_USER + 0x1D)
+#define ID_TEXT_4     (GUI_ID_USER + 0x1E)
+#define ID_TEXT_5     (GUI_ID_USER + 0x1F)
+#define ID_TEXT_6     (GUI_ID_USER + 0x20)
+#define ID_EDIT_1     (GUI_ID_USER + 0x21)
+#define ID_EDIT_2     (GUI_ID_USER + 0x22)
+#define ID_EDIT_3     (GUI_ID_USER + 0x23)
+#define ID_EDIT_4     (GUI_ID_USER + 0x24)
+#define ID_EDIT_5     (GUI_ID_USER + 0x25)
+#define ID_TEXT_7     (GUI_ID_USER + 0x26)
+#define ID_TEXT_8     (GUI_ID_USER + 0x27)
 
-#define ID_IMAGE_0_IMAGE_0    0x00
+#define ID_IMAGE_0_IMAGE_0     0x00
 
 // USER START (Optionally insert additional defines)
 // USER END
@@ -197,15 +208,27 @@ static U8 _acImage_0[5495] = {
 *       _aDialogCreate
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-  { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 800, 480, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "startButton", ID_BUTTON_0, 10, 100, 300, 100, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "stopButton", ID_BUTTON_1, 10, 300, 300, 100, 0, 0x0, 0 },
-  { IMAGE_CreateIndirect, "Image", ID_IMAGE_0, 0, 0, 160, 95, 0, 0, 0 },
-  { TEXT_CreateIndirect, "Text", ID_TEXT_0, 405, 275, 100, 20, 0, 0x64, 0 },
-  { RADIO_CreateIndirect, "Radio", ID_RADIO_0, 600, 10, 150, 200, 100, 0x140a, 0 },
-  { EDIT_CreateIndirect, "Edit", ID_EDIT_0, 360, 294, 150, 30, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "Text", ID_TEXT_1, 405, 334, 80, 20, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Edit", ID_EDIT_1, 360, 355, 150, 30, 0, 0x64, 0 },
+  { WINDOW_CreateIndirect, "Home", ID_WINDOW_0, 0, 0, 800, 480, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "startButton", ID_BUTTON_0, 5, 135, 240, 90, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "stopButton", ID_BUTTON_1, 5, 230, 240, 150, 0, 0x0, 0 },
+  { IMAGE_CreateIndirect, "Logo", ID_IMAGE_0, 5, 385, 160, 93, 0, IMAGE_CF_TILE | IMAGE_CF_ALPHA | IMAGE_CF_AUTOSIZE, 0 },
+  { TEXT_CreateIndirect, "Automatic Glass Polisher Prototype", ID_TEXT_0, 165, 5, 470, 30, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "setupButton", ID_BUTTON_2, 5, 40, 240, 90, 0, 0x0, 0 },
+  { GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 250, 105, 300, 243, 0, 0x0, 10 },
+  { EDIT_CreateIndirect, "Edit", ID_EDIT_0, 638, 65, 80, 30, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "currentTemp", ID_TEXT_1, 604, 38, 150, 31, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "targetTemp", ID_TEXT_2, 612, 107, 133, 26, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "rollerSpeed", ID_TEXT_3, 612, 178, 133, 26, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "currentSegTime", ID_TEXT_4, 560, 250, 238, 27, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "totalElapsedTime", ID_TEXT_5, 580, 325, 196, 31, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "timeToComplee", ID_TEXT_6, 583, 400, 191, 31, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit", ID_EDIT_1, 635, 132, 80, 30, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit", ID_EDIT_2, 638, 204, 80, 30, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit", ID_EDIT_3, 635, 275, 80, 30, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit", ID_EDIT_4, 635, 350, 80, 30, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit", ID_EDIT_5, 635, 425, 80, 30, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text", ID_TEXT_7, 724, 69, 28, 26, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text", ID_TEXT_8, 724, 134, 28, 23, 0, 0x64, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -230,8 +253,6 @@ static const void * _GetImageById(U32 Id, U32 * pSize) {
 }
 
 // USER START (Optionally insert additional static code)
-static PwmOut pwm(p7);
-
 // USER END
 
 /*********************************************************************
@@ -241,80 +262,147 @@ static PwmOut pwm(p7);
 static void _cbDialog(WM_MESSAGE * pMsg) {
   const void * pData;
   WM_HWIN      hItem;
-  WM_HWIN		hDlg;
-  int     		Sel;
   U32          FileSize;
   int          NCode;
   int          Id;
-  hDlg = pMsg->hWin;
   // USER START (Optionally insert additional variables)
   // USER END
 
   switch (pMsg->MsgId) {
   case WM_INIT_DIALOG:
     //
-    // Initialization of 'Window'
+    // Initialization of 'Home'
     //
     hItem = pMsg->hWin;
-    WINDOW_SetBkColor(hItem, 0x001E8A28);
+    WINDOW_SetBkColor(hItem, 0x00808080);
     //
     // Initialization of 'startButton'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0);
-    BUTTON_SetText(hItem, "START");
     BUTTON_SetFont(hItem, GUI_FONT_32B_ASCII);
+    BUTTON_SetText(hItem, "START");
     //
     // Initialization of 'stopButton'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_1);
-    BUTTON_SetText(hItem, "STOP");
     BUTTON_SetFont(hItem, GUI_FONT_32B_ASCII);
+    BUTTON_SetText(hItem, "STAHP");
     //
-    // Initialization of 'Image'
+    // Initialization of 'Logo'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_IMAGE_0);
     pData = _GetImageById(ID_IMAGE_0_IMAGE_0, &FileSize);
     IMAGE_SetPNG(hItem, pData, FileSize);
     //
-    // Initialization of 'Text'
+    // Initialization of 'Automatic Glass Polisher Prototype'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
-    TEXT_SetFont(hItem, GUI_FONT_20F_ASCII);
-    TEXT_SetText(hItem, "Temp C");
+    TEXT_SetFont(hItem, GUI_FONT_32B_ASCII);
     //
-    // Initialization of 'Radio'
+    // Initialization of 'setupButton'
     //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_RADIO_0);
-    RADIO_SetText(hItem, "10%", 0);
-    RADIO_SetText(hItem, "20%", 1);
-    RADIO_SetText(hItem, "30%", 2);
-    RADIO_SetText(hItem, "40%", 3);
-    RADIO_SetText(hItem, "50%", 4);
-    RADIO_SetText(hItem, "60%", 5);
-    RADIO_SetText(hItem, "70%", 6);
-    RADIO_SetText(hItem, "80%", 7);
-    RADIO_SetText(hItem, "90%", 8);
-    RADIO_SetText(hItem, "100%", 9);
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_2);
+    BUTTON_SetFont(hItem, GUI_FONT_32B_ASCII);
+    BUTTON_SetText(hItem, "Setup");
+    //
+    // Initialization of 'Graph'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_GRAPH_0);
+    GRAPH_SetBorder(hItem, 10, 5, 10, 25);
     //
     // Initialization of 'Edit'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
-
-    EDIT_SetFont(hItem, GUI_FONT_32B_1);
+    EDIT_SetText(hItem, "123");
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
-    // Initialization of 'Text'
+    // Initialization of 'currentTemp'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
-    TEXT_SetFont(hItem, GUI_FONT_20F_ASCII);
-    TEXT_SetText(hItem, "Temp F");
+    TEXT_SetText(hItem, "Current Temp");
+    TEXT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'targetTemp'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
+    TEXT_SetTextColor(hItem, 0x00000000);
+    TEXT_SetText(hItem, "Target Temp");
+    TEXT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'rollerSpeed'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_3);
+    TEXT_SetText(hItem, "Roller Speed");
+    TEXT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'currentSegTime'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
+    TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_TOP);
+    TEXT_SetText(hItem, "Current Segment Time");
+    TEXT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'totalElapsedTime'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_5);
+    TEXT_SetTextColor(hItem, 0x00000000);
+    TEXT_SetText(hItem, "Total Elapsed Time");
+    TEXT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'timeToComplee'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_6);
+    TEXT_SetText(hItem, "Time To Complete");
+    TEXT_SetTextColor(hItem, 0x00000000);
+    TEXT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Edit'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_1);
-
-    EDIT_SetFont(hItem, GUI_FONT_32B_ASCII);
+    EDIT_SetText(hItem, "123");
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Edit'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_2);
+    EDIT_SetText(hItem, "123");
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Edit'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_3);
+    EDIT_SetText(hItem, "123");
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Edit'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_4);
+    EDIT_SetText(hItem, "123");
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Edit'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_5);
+    EDIT_SetText(hItem, "123");
+    EDIT_SetFont(hItem, GUI_FONT_24B_1);
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of 'Text'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_7);
+    TEXT_SetFont(hItem, GUI_FONT_24_ASCII);
+    TEXT_SetText(hItem, "C");
+    //
+    // Initialization of 'Text'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_8);
+    TEXT_SetFont(hItem, GUI_FONT_24_ASCII);
+    TEXT_SetText(hItem, "C");
     // USER START (Optionally insert additional code for further widget initialization)
     // USER END
     break;
@@ -326,8 +414,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
-    	  pwm.period(.01);
-    	// USER END
+        // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -341,8 +428,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
-    	  pwm = 0;
-    	  // USER END
+        // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -352,7 +438,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       // USER END
       }
       break;
-    case ID_RADIO_0: // Notifications sent by 'Radio'
+    case ID_BUTTON_2: // Notifications sent by 'setupButton'
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
@@ -361,45 +447,6 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
         // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-          hItem = WM_GetDialogItem(hDlg, ID_RADIO_0);
-          Sel   = RADIO_GetValue(hItem);
-          switch(Sel){
-          case 0:
-        	  pwm = .1;
-        	  break;
-          case 1:
-        	  pwm = .2;
-        	  break;
-          case 2:
-        	  pwm = .3;
-        	  break;
-          case 3:
-        	  pwm = .4;
-        	  break;
-          case 4:
-        	  pwm = .5;
-        	  break;
-          case 5:
-        	  pwm = .6;
-        	  break;
-          case 6:
-        	  pwm = .7;
-        	  break;
-          case 7:
-        	  pwm = .8;
-        	  break;
-          case 8:
-        	  pwm = .9;
-        	  break;
-          case 9:
-        	  pwm = 1;
-        	  break;
-
-          }
-    	  // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
       // USER END
@@ -441,6 +488,78 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       // USER END
       }
       break;
+    case ID_EDIT_2: // Notifications sent by 'Edit'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_EDIT_3: // Notifications sent by 'Edit'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_EDIT_4: // Notifications sent by 'Edit'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_EDIT_5: // Notifications sent by 'Edit'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
     // USER START (Optionally insert additional code for further Ids)
     // USER END
     }
@@ -452,6 +571,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     break;
   }
 }
+
 /*********************************************************************
 *
 *       Public code
@@ -460,11 +580,12 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 */
 /*********************************************************************
 *
-*       CreateWindow
+*       CreateHome
 */
-WM_HWIN CreateWindow(void);
-WM_HWIN CreateWindow(void) {
+WM_HWIN CreateHome(void);
+WM_HWIN CreateHome(void) {
   WM_HWIN hWin;
+
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
   return hWin;
 }

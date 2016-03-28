@@ -5,7 +5,6 @@
 #include "GUI.h"
 #include "DIALOG.h"
 #include "rtos.h"
-#include <Interface.h>
 #define ID_EDIT_1    (GUI_ID_USER + 0x11)
 #define ID_TEXT_0    (GUI_ID_USER + 0x0C)
 static Serial slave(p12, p13);
@@ -13,6 +12,8 @@ static char tempC [] = "0000";
 static char tempF [] = "0000";
 DigitalOut led1(LED1);
 static WM_HWIN mainWin;
+
+WM_HWIN CreateHome(void);
 
 char *intToDigits(int num){
 	static char digitText[5] = {'0','0','0','0',0};
@@ -94,7 +95,7 @@ int main()
     // Execute the emWin example and never return...
     GUI_Init();
 
-    mainWin=CreateWindow();
+    mainWin = CreateHome();
     GUI_ExecCreatedDialog(mainWin);
 
     while(1)
