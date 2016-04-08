@@ -416,15 +416,15 @@ ARM Macro Assembler    Page 7
               00000000 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M0 --apcs=interw
-ork --depend=.\flash\startup_stm32f051.d -o.\flash\startup_stm32f051.o -IC:\Use
-rs\Wesley\Documents\F0_Keil\Boards\ST\STM32F051-Discovery\RTX_Blinky\RTE -IC:\K
-eil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\4
-.5.0\CMSIS\RTOS\RTX\INC -IC:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\7.0.0\Board -
-IC:\Keil_v5\ARM\PACK\Keil\STM32F0xx_DFP\1.4.0\Device\Include --predefine="__RTX
- SETA 1" --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefin
-e="__UVISION_VERSION SETA 518" --predefine="_RTE_ SETA 1" --predefine="STM32F05
-1 SETA 1" --list=.\flash\startup_stm32f051.lst RTE\Device\STM32F051R8\startup_s
-tm32f051.s
+ork --depend=.\flash\startup_stm32f051.d -o.\flash\startup_stm32f051.o -I"C:\Us
+ers\Wesley\Documents\senior-design\slaveController\UART and ADC working\RTE" -I
+C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\ARM\CMS
+IS\4.5.0\CMSIS\RTOS\RTX\INC -IC:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\7.0.0\Boa
+rd -IC:\Keil_v5\ARM\PACK\Keil\STM32F0xx_DFP\1.4.0\Device\Include --predefine="_
+_RTX SETA 1" --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --pred
+efine="__UVISION_VERSION SETA 518" --predefine="_RTE_ SETA 1" --predefine="STM3
+2F051 SETA 1" --list=.\flash\startup_stm32f051.lst RTE\Device\STM32F051R8\start
+up_stm32f051.s
 
 
 

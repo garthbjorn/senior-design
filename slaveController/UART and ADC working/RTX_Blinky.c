@@ -5,12 +5,10 @@
 #include "f0_usart.h"
 #include "vt100.h"
 
-//void Delay()
-//{
-//	int i;
-//	for (i = 0; i < 1000000; i++)
-//		asm("nop");
-//}
+void Delay(__IO uint32_t nCount) {
+  while(nCount--) {
+  }
+}
 
 void ADC_GPIO_Config(void)
 {
@@ -78,30 +76,42 @@ void adc_f0_init(void)
 
 int main()
 {
+	uint16_t C = 0;
+	uint16_t F = 0;
+	uint16_t ADC1Value = 0;
+	//uint16_t i = 0;
+	
 	adc_f0_init();
 	usart_f0_init();
 	VT100_init(USART1);
  
 	while (1)
 	{
-		uint16_t ADC1ConvertedValue;
- 
 	    /* Test EOC flag */
 		while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET)
 			;
  
 	    /* Get ADC1 converted data */
-		ADC1ConvertedValue = ADC_GetConversionValue(ADC1);
-		update_rawADC(USART1, ADC1ConvertedValue);		//ADC value 0-4096
-		update_degF(USART1, ADC1ConvertedValue/1.64);	//degF 0-2500F
-		update_degC(USART1, ADC1ConvertedValue/3);		//degC 0-1370C
+		ADC1Value = ADC_GetConversionValue(ADC1);
+		update_rawADC(USART1, ADC1Value);		//ADC value 0-4096
+		//update_degF(USART1, ADC1ConvertedValue/0.78);	//degF 0-2500F //1.64
+		//update_degC(USART1, ADC1ConvertedValue/1.43);		//degC 0-1370C	//3
+		if(ADC1Value > 25){
+			C = ADC1Value*0.732-18;
+		}else{
+			C = 0;
+		}
+		F = 9/5*C+32;
 		
-		if (ADC1ConvertedValue > 4000)
+		update_degC(USART1, C);		//degC 0-1370C	//3
+		update_degF(USART1, F);	//degF 0-2500F //1.64
+		
+		if (ADC1Value > 4000)
 		{
 			GPIOC->BSRR = GPIO_Pin_8;
 			GPIOC->BSRR = GPIO_Pin_9;
 		}
-		else if (ADC1ConvertedValue > 2000)
+		else if (ADC1Value > 2000)
 		{
 			GPIOC->BSRR = GPIO_Pin_8;
 			GPIOC->BRR = GPIO_Pin_9;
@@ -111,5 +121,6 @@ int main()
 			GPIOC->BRR = GPIO_Pin_8;
 			GPIOC->BRR = GPIO_Pin_9;
 		}
+		Delay(2500000);
 	}
 }

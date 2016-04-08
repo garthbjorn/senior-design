@@ -84,27 +84,15 @@ void USART_GPIO()
 }
 
 void USART_PUT_TEMPC(USART_TypeDef* USARTx, uint32_t t){
-		//USART_putchar(USARTx, 'c');
-		if(t<1000)
-			USART_putnum(USARTx, 0);
-		if(t<100)
-			USART_putnum(USARTx, 0);
-		if(t<10)
-			USART_putnum(USARTx, 0);
+		USART_putchar(USARTx, 'c');
 		USART_putnum(USARTx, t);
-		USART_putchar(USARTx, '\n');
+		USART_putchar(USARTx, 'n');
 }	
 
 void USART_PUT_TEMPF(USART_TypeDef* USARTx, uint32_t t){
-		//USART_putchar(USARTx, 'f');
-		if(t<1000)
-			USART_putnum(USARTx, 0);
-		if(t<100)
-			USART_putnum(USARTx, 0);
-		if(t<10)
-			USART_putnum(USARTx, 0);
+		USART_putchar(USARTx, 'f');
 		USART_putnum(USARTx, t);
-		USART_putchar(USARTx, '\n');
+		USART_putchar(USARTx, 'n');
 }	
 
 void USART_putnum(USART_TypeDef* USARTx, uint32_t x)
