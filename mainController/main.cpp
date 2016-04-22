@@ -5,15 +5,27 @@
 #include "GUI.h"
 #include "DIALOG.h"
 #include "rtos.h"
-#define ID_EDIT_1    (GUI_ID_USER + 0x11)
+#include "pinmap.h"
+
+#define ID_EDIT_0    (GUI_ID_USER + 0x1A)
 #define ID_TEXT_0    (GUI_ID_USER + 0x0C)
 static Serial slave(p12, p13);
-static char tempC [] = "0000";
-static char tempF [] = "0000";
-DigitalOut led1(LED1);
+DigitalOut led1(LED3);
+PwmOut motor(p7);
+InterruptIn hall(p4);
+Timer speedTim;
 static WM_HWIN mainWin;
+double speed = 0;
+int values[2][6] = {{0,0,0,0,0,0},{0,0,0,0,0,0}};
+int times = 0;
+int id = 0;
 
 WM_HWIN CreateHome(void);
+
+void sendValues(){
+	slave.puts("");
+	slave.puts(convertIntToString(values[0][0]));
+}
 
 char *intToDigits(int num){
 	static char digitText[5] = {'0','0','0','0',0};
@@ -24,6 +36,18 @@ char *intToDigits(int num){
 	}
 	return digitText;
 }
+//Convert an int to a string
+char *convertIntToString(int i) {
+  char *str = (char *) malloc(sizeof(int) * i/10 + 1);
+  sprintf(str, "%d", i);
+  return str;
+}
+
+char *convertDoubleToString(double i) {
+  char *str = (char *) malloc(sizeof(double) * i/10 + 1);
+  sprintf(str, "%f", i);
+  return str;
+}
 
 void uart_thread(void const *args){
 	char value[8] = {0};
@@ -31,12 +55,10 @@ void uart_thread(void const *args){
 	int index = 0;
 	WM_HWIN hItem;
 
-	hItem = WM_GetDialogItem(mainWin,ID_EDIT_1);
-	EDIT_SetText(hItem,intToDigits(1000));
-    hItem = WM_GetDialogItem(mainWin, ID_TEXT_0);
+	hItem = WM_GetDialogItem(mainWin,ID_EDIT_0);
     TEXT_SetFont(hItem, GUI_FONT_20F_ASCII);
-    TEXT_SetText(hItem, intToDigits(index));
-    slave.putc('f');
+    TEXT_SetText(hItem, convertIntToString(554));
+    slave.putc('c');
 	while(1){
 		wait_ms(100);
 
@@ -51,21 +73,40 @@ void uart_thread(void const *args){
 					num += value[i] - 0x30;
 					i++;
 				}
-				hItem = WM_GetDialogItem(mainWin,ID_EDIT_1);
-				EDIT_SetText(hItem,intToDigits(num));
+				hItem = WM_GetDialogItem(mainWin,ID_EDIT_0);
+				EDIT_SetText(hItem,convertIntToString(num));
 				index = 0;
-				slave.putc('f');
+				slave.putc('c');
 			}
 		}
+		slave.puts(convertDoubleToString(speed));
+		Thread::yield();
 	}
 }
+
+void rising()
+{
+	led1 = !led1;
+//	static int i = 0;
+//	static int newTime = 0;
+//	i++;
+//	if(i == 1)
+//	    speedTim.start();
+//	if(i == 6){
+//		newTime = speedTim.read_ms();
+//		speedTim.stop();
+//		speedTim.reset();
+//		speed = (5./newTime)/1000;
+//		i = 0;
+//	}
+}
+
 int main()
 {
   DMBoard::BoardError err;
   DMBoard* board = &DMBoard::instance();
   RtosLog* log = board->logger();
   Display* disp = board->display();
-  led1 = 0;
   do {
     err = board->init();
     if (err != DMBoard::Ok) {
@@ -73,7 +114,6 @@ int main()
       break;
     }
 
-    log->printf("\n\nHello World!\n\n");
     
     // Create the HAL for emWin
     // - Use 3 frame buffers for tripple-buffering
@@ -89,9 +129,12 @@ int main()
     // Add extra options here
     // - Set WM_CF_MEMDEV option to use "Memory Devices" to reduce flickering
     WM_SetCreateFlags(WM_CF_MEMDEV);
-    
+    WM_MULTIBUF_Enable(0);
+	pin_function(p4,0);
     Thread uartthread(uart_thread);
-
+    led1 = 1;
+    motor = 0;
+//    hall.rise(&rising);
     // Execute the emWin example and never return...
     GUI_Init();
 

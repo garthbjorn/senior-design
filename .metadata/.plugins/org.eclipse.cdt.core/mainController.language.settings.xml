@@ -20164,6 +20164,230 @@
 						<entry kind="macro" name="__MBED__" value="1"/>
 						<entry kind="macro" name="__NEWLIB__" value=""/>
 					</resource>
+					<resource project-relative-path="thing.c">
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/Bios">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/Display">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/FileSystems">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/Memory">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_FATFileSystem">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_FATFileSystem/ChaN">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_HttpServer">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_HttpServer/Handler">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHost">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHost3GModule">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostHID">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostHub">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostMIDI">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostMSD">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostSerial">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/Socket">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-eth">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-eth/arch">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-eth/arch/TARGET_NXP">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-sys">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-sys/arch">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include/ipv4">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include/ipv4/lwip">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include/lwip">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include/netif">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/netif">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/netif/ppp">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/api">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/core">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/core/ipv4">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/core/snmp">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBAudio">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBDevice">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBHID">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBMIDI">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBMSD">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBSerial">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rpc">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtos">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtx">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtx/TARGET_CORTEX_M">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtx/TARGET_CORTEX_M/TARGET_M4">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtx/TARGET_CORTEX_M/TARGET_M4/TOOLCHAIN_GCC">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/api">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/hal">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/cmsis">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/cmsis/TARGET_NXP">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/cmsis/TARGET_NXP/TARGET_LPC408X">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/cmsis/TARGET_NXP/TARGET_LPC408X/TOOLCHAIN_GCC_CR">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/hal">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/hal/TARGET_NXP">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/hal/TARGET_NXP/TARGET_LPC408X">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/hal/TARGET_NXP/TARGET_LPC408X/TARGET_LPC4088_DM">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/common">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMemWin">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMemWin/emwin">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMemWin/emwin/emWin_header">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMemWin/png">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="ARM_MATH_CM4" value=""/>
+						<entry kind="macro" name="CPP_USE_HEAP" value=""/>
+						<entry kind="macro" name="MBED_BUILD_TIMESTAMP" value="1456087336.46"/>
+						<entry kind="macro" name="TARGET_CORTEX_M" value=""/>
+						<entry kind="macro" name="TARGET_LIKE_CORTEX_M4" value=""/>
+						<entry kind="macro" name="TARGET_LIKE_MBED" value=""/>
+						<entry kind="macro" name="TARGET_LPC4088_DM" value=""/>
+						<entry kind="macro" name="TARGET_LPC408X" value=""/>
+						<entry kind="macro" name="TARGET_M4" value=""/>
+						<entry kind="macro" name="TARGET_NXP" value=""/>
+						<entry kind="macro" name="TARGET_RTOS_M4_M7" value=""/>
+						<entry kind="macro" name="TOOLCHAIN_GCC" value=""/>
+						<entry kind="macro" name="TOOLCHAIN_GCC_CR" value=""/>
+						<entry kind="macro" name="__CODE_RED" value=""/>
+						<entry kind="macro" name="__CORTEX_M4" value=""/>
+						<entry kind="macro" name="__FPU_PRESENT" value="1"/>
+						<entry kind="macro" name="__MBED__" value="1"/>
+						<entry kind="macro" name="__NEWLIB__" value=""/>
+					</resource>
 					<resource project-relative-path="DMSupport/EthernetInterface/lwip/api/netbuf.c">
 						<entry kind="includePath" name="/${ProjName}/">
 							<flag value="VALUE_WORKSPACE_PATH"/>
@@ -33159,6 +33383,230 @@
 						<entry kind="macro" name="__NEWLIB__" value=""/>
 					</resource>
 					<resource project-relative-path="DMSupport/DM_FATFileSystem/ChaN/ccsbcs.cpp">
+						<entry kind="includePath" name="/${ProjName}/">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/Bios">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/Display">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/FileSystems">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/Memory">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_FATFileSystem">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_FATFileSystem/ChaN">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_HttpServer">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_HttpServer/Handler">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHost">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHost3GModule">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostHID">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostHub">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostMIDI">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostMSD">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/DM_USBHost/USBHostSerial">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/Socket">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-eth">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-eth/arch">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-eth/arch/TARGET_NXP">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-sys">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip-sys/arch">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include/ipv4">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include/ipv4/lwip">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include/lwip">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/include/netif">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/netif">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/netif/ppp">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/api">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/core">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/core/ipv4">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/EthernetInterface/lwip/core/snmp">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBAudio">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBDevice">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBHID">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBMIDI">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBMSD">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/USBDevice/USBSerial">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rpc">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtos">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtx">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtx/TARGET_CORTEX_M">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtx/TARGET_CORTEX_M/TARGET_M4">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-rtos/rtx/TARGET_CORTEX_M/TARGET_M4/TOOLCHAIN_GCC">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/api">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/hal">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/cmsis">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/cmsis/TARGET_NXP">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/cmsis/TARGET_NXP/TARGET_LPC408X">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/cmsis/TARGET_NXP/TARGET_LPC408X/TOOLCHAIN_GCC_CR">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/hal">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/hal/TARGET_NXP">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/hal/TARGET_NXP/TARGET_LPC408X">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/targets/hal/TARGET_NXP/TARGET_LPC408X/TARGET_LPC4088_DM">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMSupport/mbed-src/common">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMemWin">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMemWin/emwin">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMemWin/emwin/emWin_header">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/DMemWin/png">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="ARM_MATH_CM4" value=""/>
+						<entry kind="macro" name="CPP_USE_HEAP" value=""/>
+						<entry kind="macro" name="MBED_BUILD_TIMESTAMP" value="1456087336.46"/>
+						<entry kind="macro" name="TARGET_CORTEX_M" value=""/>
+						<entry kind="macro" name="TARGET_LIKE_CORTEX_M4" value=""/>
+						<entry kind="macro" name="TARGET_LIKE_MBED" value=""/>
+						<entry kind="macro" name="TARGET_LPC4088_DM" value=""/>
+						<entry kind="macro" name="TARGET_LPC408X" value=""/>
+						<entry kind="macro" name="TARGET_M4" value=""/>
+						<entry kind="macro" name="TARGET_NXP" value=""/>
+						<entry kind="macro" name="TARGET_RTOS_M4_M7" value=""/>
+						<entry kind="macro" name="TOOLCHAIN_GCC" value=""/>
+						<entry kind="macro" name="TOOLCHAIN_GCC_CR" value=""/>
+						<entry kind="macro" name="__CODE_RED" value=""/>
+						<entry kind="macro" name="__CORTEX_M4" value=""/>
+						<entry kind="macro" name="__FPU_PRESENT" value="1"/>
+						<entry kind="macro" name="__MBED__" value="1"/>
+						<entry kind="macro" name="__NEWLIB__" value=""/>
+					</resource>
+					<resource project-relative-path="logos.cpp">
 						<entry kind="includePath" name="/${ProjName}/">
 							<flag value="VALUE_WORKSPACE_PATH"/>
 						</entry>

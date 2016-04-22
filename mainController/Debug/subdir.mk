@@ -5,16 +5,19 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../Interface.cpp \
+../logos.cpp \
 ../main.cpp \
 ../pwm.cpp 
 
 OBJS += \
 ./Interface.o \
+./logos.o \
 ./main.o \
 ./pwm.o 
 
 CPP_DEPS += \
 ./Interface.d \
+./logos.d \
 ./main.d \
 ./pwm.d 
 
