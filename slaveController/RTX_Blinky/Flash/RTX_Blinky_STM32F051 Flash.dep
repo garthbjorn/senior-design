@@ -16,7 +16,7 @@ I (f0_usart.h)(0x56F2F409)
 I (f0_adc.h)(0x56F2EBD7)
 I (vt100.h)(0x56EB7FAC)
 I (display.h)(0x56EB4950)
-F (.\f0_usart.c)(0x56F4A89C)(-c --cpu Cortex-M0 -D__RTX -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I C:\Users\Wesley\Documents\senior-design\slaveController\RTX_Blinky\RTE-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\7.0.0\Board-I C:\Keil_v5\ARM\PACK\Keil\STM32F0xx_DFP\1.4.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F051-o .\flash\f0_usart.o --omf_browse .\flash\f0_usart.crf --depend .\flash\f0_usart.d)
+F (.\f0_usart.c)(0x56F5D2A9)(-c --cpu Cortex-M0 -D__RTX -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I C:\Users\Wesley\Documents\senior-design\slaveController\RTX_Blinky\RTE-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\7.0.0\Board-I C:\Keil_v5\ARM\PACK\Keil\STM32F0xx_DFP\1.4.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F051-o .\flash\f0_usart.o --omf_browse .\flash\f0_usart.crf --depend .\flash\f0_usart.d)
 I (stm32f0xx_gpio.h)(0x56E3E4A2)
 I (stm32f0xx.h)(0x56E471F6)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm0.h)(0x562689FC)
