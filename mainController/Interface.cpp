@@ -16,19 +16,31 @@
 *        Internet: www.segger.com  Support: support@segger.com       *
 *                                                                    *
 **********************************************************************
+*																	 *
+*		Following the generation of this file I have implemented 	 *
+*		the functionality described in the README to handle all 	 *
+*		user input as well as allow for drawing to the screen.		 *
+*																	 *
+**********************************************************************
 */
 
-// USER START (Optionally insert additional includes)
-// USER END
 #include "mbed.h"
 #include "logos.h"
 #include "DIALOG.h"
+#include "WM.h"
 
+extern volatile int seconds;
+
+// Usful logo
 extern U8 _acImage_0[5495];
+// Boise State B
 extern U8 _acImage_1[39378];
 /*********************************************************************
 *
 *       Defines
+*       EMWIN uses these defines for accessing the elements of the GUI
+*       so they could be moved to a header file but I have left them
+*       here for easy reference when coding.
 *
 **********************************************************************
 */
@@ -101,6 +113,16 @@ extern U8 _acImage_1[39378];
 #define ID_FRAMEWIN_1    (GUI_ID_USER + 0x54)
 #define ID_EDIT_18			(GUI_ID_USER + 0x55)
 
+#define ID_EDIT_19			(GUI_ID_USER + 0x56)
+#define ID_EDIT_20			(GUI_ID_USER + 0x57)
+#define ID_EDIT_21			(GUI_ID_USER + 0x58)
+#define ID_EDIT_22			(GUI_ID_USER + 0x59)
+#define ID_EDIT_23			(GUI_ID_USER + 0x5a)
+#define ID_EDIT_24			(GUI_ID_USER + 0x5b)
+#define ID_BUTTON_21		(GUI_ID_USER + 0x5c)
+#define ID_BUTTON_22		(GUI_ID_USER + 0x5d)
+#define ID_BUTTON_23		(GUI_ID_USER + 0x5e)
+#define ID_TEXT_17			(GUI_ID_USER + 0x5f)
 
 
 /*********************************************************************
@@ -111,16 +133,32 @@ extern U8 _acImage_1[39378];
 */
 volatile bool numPadOpen = false;
 extern PwmOut motor;
-static float motors = 50;
+static float motors = 0;
 char *convertIntToString(int i);
-extern int values[2][6];
-int valuesId[2][6]={{ID_EDIT_6,ID_EDIT_8,ID_EDIT_10,ID_EDIT_12,ID_EDIT_14,ID_EDIT_16},{ID_EDIT_7,ID_EDIT_9,ID_EDIT_11,ID_EDIT_13,ID_EDIT_15,ID_EDIT_17}};
-extern int times;
-extern int id;
+void start();
+void stop();
+void setProfile1();
+void setProfile2();
+void setProfile3();
+void setProfileCust();
+extern int values[3][6];
+// Gas/Air/Time
+int valuesId[3][6]={{ID_EDIT_6,ID_EDIT_8,ID_EDIT_10,ID_EDIT_12,ID_EDIT_14,ID_EDIT_16},{ID_EDIT_7,ID_EDIT_9,ID_EDIT_11,ID_EDIT_13,ID_EDIT_15,ID_EDIT_17},{ID_EDIT_19,ID_EDIT_20,ID_EDIT_21,ID_EDIT_22,ID_EDIT_23,ID_EDIT_24}};
+enum type{
+	GAS,
+	AIR,
+	TIME,
+};
+static int type;
+static int id;
+static volatile bool firstOn = true;
 
 /*********************************************************************
 *
 *       _numPad
+*       struct used by emWin to generate the numPad.
+*       params are
+*       type of widget, name, ID, x1, y1, xsize, ysize, NA,NA,NA
 */
 static const GUI_WIDGET_CREATE_INFO _numPad[] = {
   { FRAMEWIN_CreateIndirect, "numPad", ID_FRAMEWIN_1, 240, 2, 560, 478, 0, 0x64, 0 },
@@ -144,6 +182,9 @@ static const GUI_WIDGET_CREATE_INFO _numPad[] = {
 /*********************************************************************
 *
 *       _aDialogCreate
+*       struct used by emWin to generate the mainWin.
+*       params are
+*       type of widget, name, ID, x1, y1, xsize, ysize, NA,NA,NA
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { WINDOW_CreateIndirect, "MainScreen", ID_WINDOW_0, 0, 0, 800, 480, 0, 0x0, 0 },
@@ -172,25 +213,38 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 /*********************************************************************
 *
 *       _aSetupCreate
+*       struct used by emWin to generate the setupWin.
+*       params are
+*       type of widget, name, ID, x1, y1, xsize, ysize, NA,NA,NA
 */
 static const GUI_WIDGET_CREATE_INFO _aSetupCreate[] = {
-  { FRAMEWIN_CreateIndirect, "SetupWin", ID_FRAMEWIN_0, 200, 5, 590, 470, 0, 0x64, 0 },
-  { BUTTON_CreateIndirect, "Up", ID_BUTTON_3, 100, 20, 100, 80, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "Down", ID_BUTTON_4, 100, 130, 100, 80, 0, 0x0, 0 },
-  { EDIT_CreateIndirect, "Tick1", ID_EDIT_6, 320, 40, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Time1", ID_EDIT_7, 450, 40, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Tick2", ID_EDIT_8, 320, 100, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Time2", ID_EDIT_9, 450, 100, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Tick3", ID_EDIT_10, 320, 160, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Time3", ID_EDIT_11, 450, 160, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Tick4", ID_EDIT_12, 320, 220, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Time4", ID_EDIT_13, 450, 220, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Tick5", ID_EDIT_14, 320, 280, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Time5", ID_EDIT_15, 450, 280, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Tick6", ID_EDIT_16, 320, 340, 80, 40, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Time6", ID_EDIT_17, 450, 340, 80, 40, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "Ticks", ID_TEXT_9, 320, 10, 80, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "Text", ID_TEXT_10, 450, 10, 80, 20, 0, 0x64, 0 },
+  { FRAMEWIN_CreateIndirect, "SetupWin", ID_FRAMEWIN_0, 5, 5, 790, 470, 0, 0x64, 0 },
+  { BUTTON_CreateIndirect, "Up", ID_BUTTON_3, 45, 20, 100, 80, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "Down", ID_BUTTON_4, 45, 130, 100, 80, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "P1", ID_BUTTON_21, 155, 20, 100, 80, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "P2", ID_BUTTON_22, 155, 130, 100, 80, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "P3", ID_BUTTON_23, 155, 240, 100, 80, 0, 0x0, 0 },
+  { EDIT_CreateIndirect, "Gas1", ID_EDIT_6, 320, 40, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Air1", ID_EDIT_7, 450, 40, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Time1", ID_EDIT_19, 580, 40, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Gas2", ID_EDIT_8, 320, 100, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Air2", ID_EDIT_9, 450, 100, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Time2", ID_EDIT_20, 580, 100, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Gas3", ID_EDIT_10, 320, 160, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Air3", ID_EDIT_11, 450, 160, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Time3", ID_EDIT_21, 580, 160, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Gas4", ID_EDIT_12, 320, 220, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Air4", ID_EDIT_13, 450, 220, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Time4", ID_EDIT_22, 580, 220, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Gas5", ID_EDIT_14, 320, 280, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Air5", ID_EDIT_15, 450, 280, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Time5", ID_EDIT_23, 580, 280, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Gas6", ID_EDIT_16, 320, 340, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Air6", ID_EDIT_17, 450, 340, 80, 40, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Time6", ID_EDIT_24, 580, 340, 80, 40, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Gas Ticks", ID_TEXT_9, 300, 10, 100, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Air Ticks", ID_TEXT_10, 440, 10, 90, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Time (s)", ID_TEXT_17, 580, 10, 80, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "One", ID_TEXT_11, 290, 50, 80, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Two", ID_TEXT_12, 290, 110, 80, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Four", ID_TEXT_13, 290, 230, 80, 20, 0, 0x64, 0 },
@@ -198,7 +252,7 @@ static const GUI_WIDGET_CREATE_INFO _aSetupCreate[] = {
   { TEXT_CreateIndirect, "Six", ID_TEXT_15, 290, 350, 80, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Three", ID_TEXT_16, 290, 170, 80, 20, 0, 0x64, 0 },
   { BUTTON_CreateIndirect, "Save", ID_BUTTON_5, 50, 350, 200, 60, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "numP", ID_BUTTON_6, 100, 240, 100, 80, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "numP", ID_BUTTON_6, 45, 240, 100, 80, 0, 0x0, 0 },
 };
 
 /*********************************************************************
@@ -210,6 +264,7 @@ static const GUI_WIDGET_CREATE_INFO _aSetupCreate[] = {
 /*********************************************************************
 *
 *       _GetImageById
+*       EMWIN function to get an image from a c file
 */
 static const void * _GetImageById(U32 Id, U32 * pSize) {
   switch (Id) {
@@ -226,6 +281,8 @@ static const void * _GetImageById(U32 Id, U32 * pSize) {
 /*********************************************************************
 *
 *       _cbnumPad
+*       Basic callback for handling the inputs experienced by the
+*       numPad as well as the drawing of it each time it is called.
 */
 static void _cbnumPad(WM_MESSAGE * pMsg) {
   WM_HWIN hItem;
@@ -374,6 +431,8 @@ static void _cbnumPad(WM_MESSAGE * pMsg) {
 			case ID_EDIT_18: // Notifications sent by 'Edit'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
+    	  // This is always the focus of a numPad so no reason to react
+    	  // on a touch.
         break;
       }
       break;
@@ -422,11 +481,6 @@ static void _cbnumPad(WM_MESSAGE * pMsg) {
     case ID_BUTTON_12: // Notifications sent by 'C'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-//				hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_18);
-//        char *num;
-//        num = convertIntToString(xRayValues[title]);
-//        EDIT_SetText(hItem, num);
-//        free(num);
         break;
       }
       break;
@@ -441,11 +495,14 @@ static void _cbnumPad(WM_MESSAGE * pMsg) {
     case ID_BUTTON_14: // Notifications sent by 'Save'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
+    	  // Get the value of the editable field and put it into our
+    	  // array at the present index selected and writing that value
+    	  // to the window
     	  hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_18);
           char txt[5];
           EDIT_GetText(hItem, txt, 5);
-          values[times][id] = atoi(txt);
-          hItem = WM_GetDialogItem(WM_GetParent(pMsg->hWin), valuesId[times][id]);
+          values[type][id] = atoi(txt);
+          hItem = WM_GetDialogItem(WM_GetParent(pMsg->hWin), valuesId[type][id]);
           EDIT_SetText(hItem,txt);
           numPadOpen = false;
        	  GUI_EndDialog(pMsg->hWin, 0);
@@ -512,14 +569,13 @@ static void _cbnumPad(WM_MESSAGE * pMsg) {
 /*********************************************************************
 *
 *       _cbSetup
+*       Basic callback for handling the inputs experienced by the
+*       setupWin as well as the drawing of it each time it is called.
 */
 static void _cbSetup(WM_MESSAGE * pMsg) {
   WM_HWIN hItem;
   int     NCode;
   int     Id;
-  // USER START (Optionally insert additional variables)
-  // USER END
-
   switch (pMsg->MsgId) {
   case WM_INIT_DIALOG:
     //
@@ -534,96 +590,138 @@ static void _cbSetup(WM_MESSAGE * pMsg) {
     // Initialization of 'Up'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_3);
-    BUTTON_SetText(hItem, "Moar");
+    BUTTON_SetText(hItem, "Up");
     BUTTON_SetFont(hItem, GUI_FONT_20B_ASCII);
     //
     // Initialization of 'Down'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_4);
     BUTTON_SetFont(hItem, GUI_FONT_20B_ASCII);
-    BUTTON_SetText(hItem, "Les");
+    BUTTON_SetText(hItem, "Down");
     //
     // Initialization of 'Tick1'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_6);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[GAS][0]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Time1'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_7);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[AIR][0]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Tick2'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_8);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[GAS][1]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Time2'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_9);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[AIR][1]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Tick3'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_10);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[GAS][2]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Time3'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_11);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[AIR][2]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Tick4'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_12);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[GAS][3]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Time4'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_13);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[AIR][3]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Tick5'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_14);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[GAS][4]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Time5'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_15);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[AIR][4]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Tick6'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_16);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[GAS][5]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
     // Initialization of 'Time6'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_17);
-    EDIT_SetText(hItem, "0");
+    EDIT_SetText(hItem, convertIntToString(values[AIR][5]));
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Time6'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_19);
+    EDIT_SetText(hItem, convertIntToString(values[TIME][0]));
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Time6'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_20);
+    EDIT_SetText(hItem, convertIntToString(values[TIME][1]));
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Time6'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_21);
+    EDIT_SetText(hItem, convertIntToString(values[TIME][2]));
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Time6'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_22);
+    EDIT_SetText(hItem, convertIntToString(values[TIME][3]));
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Time6'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_23);
+    EDIT_SetText(hItem, convertIntToString(values[TIME][4]));
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    //
+    // Initialization of 'Time6'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_24);
+    EDIT_SetText(hItem, convertIntToString(values[TIME][5]));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_24B_ASCII);
     //
@@ -631,12 +729,20 @@ static void _cbSetup(WM_MESSAGE * pMsg) {
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_9);
     TEXT_SetFont(hItem, GUI_FONT_24B_ASCII);
-    TEXT_SetText(hItem, "Ticks");
+    TEXT_SetText(hItem, "Gas Ticks");
     TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     //
     // Initialization of 'Text'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_10);
+    TEXT_SetFont(hItem, GUI_FONT_24B_ASCII);
+    TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    TEXT_SetTextColor(hItem, 0x00000000);
+    TEXT_SetText(hItem, "Air Ticks");
+    //
+    // Initialization of 'Text'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_17);
     TEXT_SetFont(hItem, GUI_FONT_24B_ASCII);
     TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     TEXT_SetTextColor(hItem, 0x00000000);
@@ -690,8 +796,24 @@ static void _cbSetup(WM_MESSAGE * pMsg) {
     hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_6);
     BUTTON_SetFont(hItem, GUI_FONT_20B_ASCII);
     BUTTON_SetText(hItem, "#");
-    // USER START (Optionally insert additional code for further widget initialization)
-    // USER END
+    //
+    // Initialization of 'Down'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_21);
+    BUTTON_SetFont(hItem, GUI_FONT_20B_ASCII);
+    BUTTON_SetText(hItem, "P1");
+    //
+    // Initialization of 'Down'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_22);
+    BUTTON_SetFont(hItem, GUI_FONT_20B_ASCII);
+    BUTTON_SetText(hItem, "P2");
+    //
+    // Initialization of 'Down'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_23);
+    BUTTON_SetFont(hItem, GUI_FONT_20B_ASCII);
+    BUTTON_SetText(hItem, "P3");
     break;
   case WM_NOTIFY_PARENT:
     Id    = WM_GetId(pMsg->hWinSrc);
@@ -700,122 +822,179 @@ static void _cbSetup(WM_MESSAGE * pMsg) {
     case ID_BUTTON_3: // Notifications sent by 'Up'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	values[times][id]++;
-    	hItem = WM_GetDialogItem(pMsg->hWin,valuesId[times][id]);
-    	EDIT_SetText(hItem,convertIntToString(values[times][id]));
+    	values[type][id]++;
+    	hItem = WM_GetDialogItem(pMsg->hWin,valuesId[type][id]);
+    	EDIT_SetText(hItem,convertIntToString(values[type][id]));
         break;
       }
       break;
     case ID_BUTTON_4: // Notifications sent by 'Down'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	if(values[times][id] == 0)
+    	if(values[type][id] == 0)
     		break;
-    	values[times][id]--;
-    	hItem = WM_GetDialogItem(pMsg->hWin,valuesId[times][id]);
-    	EDIT_SetText(hItem,convertIntToString(values[times][id]));
+    	values[type][id]--;
+    	hItem = WM_GetDialogItem(pMsg->hWin,valuesId[type][id]);
+    	EDIT_SetText(hItem,convertIntToString(values[type][id]));
         break;
       }
       break;
-    case ID_EDIT_6: // Notifications sent by 'Tick1'
+    /*****************************************************************
+     *
+     * Selecting any of the editable fields will put that point in our
+     * values array in focus so that it can be modified by the numPad
+     * or the up and down buttons
+     *
+     ****************************************************************/
+    case ID_EDIT_6: // Notifications sent by 'Air1'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 0;
+    	  type = GAS;
     	  id = 0;
         break;
       }
       break;
-    case ID_EDIT_7: // Notifications sent by 'Time1'
+    case ID_EDIT_7: // Notifications sent by 'Air1'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 1;
+    	  type = AIR;
     	  id = 0;
         break;
       }
       break;
-    case ID_EDIT_8: // Notifications sent by 'Tick2'
+    case ID_EDIT_8: // Notifications sent by 'Gas2'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 0;
+    	  type = GAS;
     	  id = 1;
         break;
       }
       break;
-    case ID_EDIT_9: // Notifications sent by 'Time2'
+    case ID_EDIT_9: // Notifications sent by 'Air2'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 1;
+    	  type = AIR;
     	  id = 1;
         break;
       }
       break;
-    case ID_EDIT_10: // Notifications sent by 'Tick3'
+    case ID_EDIT_10: // Notifications sent by 'Gas3'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 0;
+    	  type = GAS;
     	  id = 2;
         break;
       }
       break;
-    case ID_EDIT_11: // Notifications sent by 'Time3'
+    case ID_EDIT_11: // Notifications sent by 'Air3'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 1;
+    	  type = AIR;
     	  id = 2;
         break;
       }
       break;
-    case ID_EDIT_12: // Notifications sent by 'Tick4'
+    case ID_EDIT_12: // Notifications sent by 'Gas4'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 0;
+    	  type = GAS;
     	  id = 3;
         break;
       }
       break;
-    case ID_EDIT_13: // Notifications sent by 'Time4'
+    case ID_EDIT_13: // Notifications sent by 'Air4'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 1;
+    	  type = AIR;
     	  id = 3;
         break;
       }
       break;
-    case ID_EDIT_14: // Notifications sent by 'Tick5'
+    case ID_EDIT_14: // Notifications sent by 'Gas5'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 0;
+    	  type = GAS;
     	  id = 4;
         break;
       }
       break;
-    case ID_EDIT_15: // Notifications sent by 'Time5'
+    case ID_EDIT_15: // Notifications sent by 'Air5'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 1;
+    	  type = AIR;
     	  id = 4;
         break;
       }
       break;
-    case ID_EDIT_16: // Notifications sent by 'Tick6'
+    case ID_EDIT_16: // Notifications sent by 'Gas6'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 0;
+    	  type = GAS;
     	  id = 5;
         break;
       }
       break;
-    case ID_EDIT_17: // Notifications sent by 'Time6'
+    case ID_EDIT_17: // Notifications sent by 'Air6'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
-    	  times = 1;
+    	  type = AIR;
     	  id = 5;
         break;
       }
       break;
+	  case ID_EDIT_19: // Notifications sent by 'Time1'
+		switch(NCode) {
+		case WM_NOTIFICATION_RELEASED:
+		  type = TIME;
+		  id = 0;
+		  break;
+		}
+		break;
+	case ID_EDIT_20: // Notifications sent by 'Time2'
+	  switch(NCode) {
+	  case WM_NOTIFICATION_RELEASED:
+		  type = TIME;
+		  id = 1;
+		break;
+	  }
+	  break;
+  case ID_EDIT_21: // Notifications sent by 'Time3'
+	switch(NCode) {
+	case WM_NOTIFICATION_RELEASED:
+	  type = TIME;
+	  id = 2;
+	  break;
+	}
+	break;
+	case ID_EDIT_22: // Notifications sent by 'Time4'
+	  switch(NCode) {
+	  case WM_NOTIFICATION_RELEASED:
+		  type = TIME;
+		  id = 3;
+		break;
+	  }
+	  break;
+	  case ID_EDIT_23: // Notifications sent by 'Time5'
+		switch(NCode) {
+		case WM_NOTIFICATION_RELEASED:
+		  type = TIME;
+		  id = 4;
+		  break;
+		}
+		break;
+	case ID_EDIT_24: // Notifications sent by 'Time6'
+	  switch(NCode) {
+	  case WM_NOTIFICATION_RELEASED:
+		  type = TIME;
+		  id = 5;
+		break;
+	  }
+	  break;
+
     case ID_BUTTON_5: // Notifications sent by 'Save'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
+    	setProfileCust();
        	GUI_EndDialog(pMsg->hWin, 0);
         break;
       }
@@ -823,6 +1002,7 @@ static void _cbSetup(WM_MESSAGE * pMsg) {
     case ID_BUTTON_6: // Notifications sent by 'numP'
       switch(NCode) {
       case WM_NOTIFICATION_RELEASED:
+    	  // Execute the numPad but don't allow multiple instances
 		if(!numPadOpen){
 			numPadOpen = true;
 			GUI_ExecDialogBox(_numPad, GUI_COUNTOF(_numPad), &_cbnumPad, pMsg->hWin, -200, 0);
@@ -830,6 +1010,30 @@ static void _cbSetup(WM_MESSAGE * pMsg) {
         break;
       }
       break;
+	  case ID_BUTTON_21: // Notifications sent by 'p1'
+			switch(NCode) {
+			case WM_NOTIFICATION_RELEASED:
+				setProfile1();
+				GUI_EndDialog(pMsg->hWin, 0);
+			  break;
+			}
+			break;
+		case ID_BUTTON_22: // Notifications sent by 'p2'
+			  switch(NCode) {
+			  case WM_NOTIFICATION_RELEASED:
+				  setProfile2();
+				  GUI_EndDialog(pMsg->hWin, 0);
+				break;
+			  }
+			  break;
+		  case ID_BUTTON_23: // Notifications sent by 'p3'
+				switch(NCode) {
+				case WM_NOTIFICATION_RELEASED:
+					setProfile3();
+					GUI_EndDialog(pMsg->hWin, 0);
+				  break;
+				}
+				break;
     }
     break;
   default:
@@ -841,6 +1045,8 @@ static void _cbSetup(WM_MESSAGE * pMsg) {
 /*********************************************************************
 *
 *       _cbDialog
+*       Basic callback for handling the inputs experienced by the
+*       mainWin as well as the drawing of it each time it is called.
 */
 static void _cbDialog(WM_MESSAGE * pMsg) {
   const void * pData;
@@ -848,16 +1054,21 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
   U32          FileSize;
   int          NCode;
   int          Id;
-  // USER START (Optionally insert additional variables)
-  // USER END
+  if(firstOn){
+	  //************************************************************************
+	  motor = 0;			// Disable to motor on init of menu
+	  firstOn = false;
+	  //************************************************************************
+  }
 
+  WM_MULTIBUF_Enable(0);
   switch (pMsg->MsgId) {
   case WM_INIT_DIALOG:
     //
     // Initialization of 'MainScreen'
     //
     hItem = pMsg->hWin;
-    WINDOW_SetBkColor(hItem, 0x000F36DE);
+    WINDOW_SetBkColor(hItem, 0x00FF0000);
     //
     // Initialization of 'startButton'
     //
@@ -869,7 +1080,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_1);
     BUTTON_SetFont(hItem, GUI_FONT_32B_ASCII);
-    BUTTON_SetText(hItem, "STAHP");
+    BUTTON_SetText(hItem, "STOP");
     //
     // Initialization of 'Logo'
     //
@@ -891,7 +1102,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'CurrentTempBox'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
-    EDIT_SetText(hItem, "123");
+    EDIT_SetText(hItem, "739");
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_32B_ASCII);
     //
@@ -938,35 +1149,35 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'TargetTempBox'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_1);
-    EDIT_SetText(hItem, "123");
+    EDIT_SetText(hItem, "740");
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_32B_ASCII);
     //
     // Initialization of 'RollerSpeedBox'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_2);
-    EDIT_SetText(hItem, "123");
+    EDIT_SetText(hItem, "40");
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_32B_ASCII);
     //
     // Initialization of 'CurrentSegBox'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_3);
-    EDIT_SetText(hItem, "123");
+    EDIT_SetText(hItem, "15");
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_32B_ASCII);
     //
     // Initialization of 'TotalElapsedBox'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_4);
-    EDIT_SetText(hItem, "123");
+    EDIT_SetText(hItem, convertIntToString(seconds));
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_32B_ASCII);
     //
     // Initialization of 'TimeToBox'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_5);
-    EDIT_SetText(hItem, "123");
+    EDIT_SetText(hItem, "650");
     EDIT_SetFont(hItem, GUI_FONT_32B_ASCII);
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     //
@@ -991,8 +1202,6 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 	hItem = WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0);
 	SLIDER_SetRange(hItem, 0,100);
 	SLIDER_SetValue(hItem, motors);
-    // USER START (Optionally insert additional code for further widget initialization)
-    // USER END
     break;
   case WM_NOTIFY_PARENT:
     Id    = WM_GetId(pMsg->hWinSrc);
@@ -1000,161 +1209,72 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     switch(Id) {
     case ID_BUTTON_0: // Notifications sent by 'startButton'
       switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
       case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
 		motor = motors/100;
-        // USER END
+		start();
         break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
       break;
     case ID_BUTTON_1: // Notifications sent by 'stopButton'
       switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
       case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
         motor = 0;
-		// USER END
+        stop();
         break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
       break;
     case ID_BUTTON_2: // Notifications sent by 'setupButton'
       switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
       case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
+    	// Execute the settings window.
 		GUI_ExecDialogBox(_aSetupCreate, GUI_COUNTOF(_aSetupCreate), &_cbSetup, pMsg->hWin, 0, 0);
-        // USER END
         break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
       break;
     case ID_EDIT_0: // Notifications sent by 'CurrentTempBox'
       switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
       case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
         break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
       break;
     case ID_EDIT_1: // Notifications sent by 'TargetTempBox'
       switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
       case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
         break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
       break;
     case ID_EDIT_2: // Notifications sent by 'RollerSpeedBox'
       switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
       case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
         break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
       break;
     case ID_EDIT_3: // Notifications sent by 'CurrentSegBox'
       switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
       case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
         break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
       break;
     case ID_EDIT_4: // Notifications sent by 'TotalElapsedBox'
       switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
       case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
         break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
       break;
     case ID_EDIT_5: // Notifications sent by 'TimeToBox'
       switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
       case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
         break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
       }
       break;
-    // USER START (Optionally insert additional code for further Ids)
 	case ID_SLIDER_0: // Notifications sent by 'Slider'
         switch(NCode) {
         case WM_NOTIFICATION_VALUE_CHANGED:
+        	/*
+        	 * Here we get the ID for the slider and set the motors placeholder to that
+        	 * value and then set the duty cycle accordingly. Finally we write that new
+        	 * value as a string to the field associated with motor speed.
+        	 */
 			hItem = WM_GetDialogItem(pMsg->hWin,ID_SLIDER_0);
       		motors = SLIDER_GetValue(hItem);
       		motor=motors/100;
@@ -1163,11 +1283,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
             break;
         }
         break;
-    // USER END
     }
     break;
-  // USER START (Optionally insert additional message handling)
-  // USER END
   default:
     WM_DefaultProc(pMsg);
     break;
@@ -1191,8 +1308,5 @@ WM_HWIN CreateHome(void) {
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
   return hWin;
 }
-
-// USER START (Optionally insert additional public code)
-// USER END
 
 /*************************** End of file ****************************/

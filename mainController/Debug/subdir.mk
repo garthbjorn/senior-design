@@ -6,20 +6,17 @@
 CPP_SRCS += \
 ../Interface.cpp \
 ../logos.cpp \
-../main.cpp \
-../pwm.cpp 
+../main.cpp 
 
 OBJS += \
 ./Interface.o \
 ./logos.o \
-./main.o \
-./pwm.o 
+./main.o 
 
 CPP_DEPS += \
 ./Interface.d \
 ./logos.d \
-./main.d \
-./pwm.d 
+./main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
