@@ -6,16 +6,12 @@
 #include "stm32f0xx_usart.h"
 #include "f0_usart.h"
 #include "f0_adc.h"
-#include "vt100.h"
-#include "display.h"
 #include "valves.h"
 
 uint8_t go = 0;
-
-//uint16_t profile[0] = {};  //A bunch of temperature data
-		//Data will most likely include a start temp, a ramp, a polish temp, a down ramp, and a final temp
-	//Need to make a systick and define a specific frequency in which this array 
-	// will be parsed to match up with real time.
+uint8_t prof = 4;
+uint8_t test = 0;
+uint8_t i = 0;
 
 int main()
 {
@@ -23,16 +19,48 @@ int main()
 	usart_f0_init();
 	valve_init();
 	
-	//systick_sync
 	while (1)
 	{
-		//if(go){
-			//if(systick_edge()){
-				
-				//increment some kind of counter
-			//}
-		//}
-		
+		go = run();
+		if(go){
+			prof = currProfile();
+			switch(prof){
+				case 0:
+					profile_custom();
+					break;
+				case 1:
+					profile1();
+					break;
+				case 2:
+					profile2();
+					break;
+				case 3:
+					profile3();
+					break;
+				default:
+					close_air();
+					close_gas();
+					break;
+			}
+			fix_time(prof);
+			while(go); //Wait until someone presses STOP
+		}else{
+			close_air();
+			close_gas();
+		}
+			
 		adc_convert();
 	}
 }
+
+
+
+
+//		if(U1 > 0){
+//			USART1_comm();
+//			U1--;
+//		}
+//		if(U2 > 0){
+//			USART2_comm();
+//			U2--;
+//		}

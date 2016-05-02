@@ -7,10 +7,48 @@
 #include <stdio.h>
 #include "f0_usart.h"
 #include "f0_adc.h"
-#include "display.h"
 #include "valves.h"
 
 extern uint8_t go;
+extern uint8_t U1;
+extern uint8_t U2;
+
+uint8_t value1[32] = {0};
+static uint8_t readChar1 = 0;
+static int index1 = 0;
+uint8_t ret = '\r';
+
+uint16_t C = 0;
+uint16_t F = 0;
+
+uint8_t value[32] = {0};
+static uint8_t readChar = 0;
+static int index = 0;
+uint16_t levels = 0;
+extern int air_c[6];
+extern int gas_c[6];
+extern int time_c[6];
+extern int temp[7];
+uint8_t profile;
+uint8_t newline = '\n';
+
+uint8_t run(void){
+	return go;
+}
+
+uint8_t currProfile(void){
+	return profile;
+}
+
+//char Rx_indx, Rx_data[2], Rx_Buffer[100], Transfer_cplt;
+#define MAX_STRLEN 12 // this is the maximum string length of our string in characters
+volatile char received_string[MAX_STRLEN+1]; // this will hold the recieved string
+
+char received;
+
+char getRx(void){
+	return received;
+}
 
 void usart_f0_init(){
 	NVIC_USART1_Configure();
@@ -132,17 +170,9 @@ void USART_puts(USART_TypeDef* USARTx, volatile char * s) {
 	}
 }
 
-
-
-uint8_t value1[32] = {0};
-static uint8_t readChar1 = 0;
-static int index1 = 0;
-uint8_t ret = '\r';
-
-//This function handles USART2 global interrupt request.
-void USART1_IRQHandler(void)
-{	
+void USART1_comm(){
 	int num = 0;
+	int num2 = 0;
 	int i = 0;
 	// check if the USART1 receive interrupt flag was set
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET){
@@ -151,27 +181,13 @@ void USART1_IRQHandler(void)
 		USART_putchar(USART2,	readChar1); //For testing use ONLY
 		
 		switch(readChar1){
-			case 'w': // Step OPEN air
-				set_dir_air(0);
-				step_air(1);
-				break;
-			case 's': //Step CLOSE air
-				set_dir_air(1);
-				step_air(1);
-				break;
-			case 'e': // Step OPEN gas
-				set_dir_gas(0);
-				step_gas(1);
-				break;
-			case 'd': // Step CLOSE gas
-				set_dir_gas(1);
-				step_gas(1);
-				break;
 			case 'x':	//open DC valves
+				go = 1;
 				open_air();
 				open_gas();
 				break;
 			case 'c':	//close DC valves
+				go = 0;
 				close_air();
 				close_gas();
 				break;
@@ -214,8 +230,6 @@ void USART1_IRQHandler(void)
 						default:
 							break;
 					}
-					
-					//USART_puts(USART2, "you tried to do an air routine");
 					break;
 				case 'g': //Gas
 					switch(value1[1]){
@@ -246,8 +260,114 @@ void USART1_IRQHandler(void)
 						default:
 							break;
 					}
-					
-					//USART_puts(USART2, "you tried to do an gas routine");
+					break;
+				case 'b':
+					switch(value1[1]){
+						case 'p':
+							set_dir_air(0);
+							switch(value1[2]){
+								case 'p':
+									set_dir_gas(0);
+									num = 0;
+									i = 3;
+									while(value1[i] != '.'){
+										if(value1[i] == '\b') break;
+										num *= 10;
+										num += value1[i] - 0x30;
+										i++;
+									}
+									i++;
+									while(value1[i] != '\r'){
+										if(value1[i] == '\b') break;
+										num2 *= 10;
+										num2 += value1[i] - 0x30;
+										i++;
+									}
+									step_both(num,num2);
+									break;
+								case 'n':
+									set_dir_gas(1);
+									num = 0;
+									i = 3;
+									while(value1[i] != '.'){
+										if(value1[i] == '\b') break;
+										num *= 10;
+										num += value1[i] - 0x30;
+										i++;
+									}
+									i++;
+									while(value1[i] != '\r'){
+										if(value1[i] == '\b') break;
+										num2 *= 10;
+										num2 += value1[i] - 0x30;
+										i++;
+									}
+									step_both(num,num2);
+									break;
+							}
+							break;
+						case 'n':
+							set_dir_air(1);
+							switch(value1[2]){
+								case 'p':
+									set_dir_gas(0);
+									num = 0;
+									i = 3;
+									while(value1[i] != '.'){
+										if(value1[i] == '\b') break;
+										num *= 10;
+										num += value1[i] - 0x30;
+										i++;
+									}
+									i++;
+									while(value1[i] != '\r'){
+										if(value1[i] == '\b') break;
+										num2 *= 10;
+										num2 += value1[i] - 0x30;
+										i++;
+									}
+									step_both(num,num2);
+									break;
+								case 'n':
+									set_dir_gas(1);
+									num = 0;
+									i = 3;
+									while(value1[i] != '.'){
+										if(value1[i] == '\b') break;
+										num *= 10;
+										num += value1[i] - 0x30;
+										i++;
+									}
+									i++;
+									while(value1[i] != '\r'){
+										if(value1[i] == '\b') break;
+										num2 *= 10;
+										num2 += value1[i] - 0x30;
+										i++;
+									}
+									step_both(num,num2);
+									break;
+							}
+							break;
+						default:
+							break;
+					}
+					break;
+				case 'p':
+					switch(value1[1]){
+						case '0':
+							profile_custom();
+							break;
+						case '1':
+							profile1();
+							break;
+						case '2':
+							profile2();
+							break;
+						case '3':
+							profile3();
+							break;
+					}
 					break;
 				default:
 					break;
@@ -258,35 +378,19 @@ void USART1_IRQHandler(void)
 	}
 }
 
-//char Rx_indx, Rx_data[2], Rx_Buffer[100], Transfer_cplt;
-#define MAX_STRLEN 12 // this is the maximum string length of our string in characters
-volatile char received_string[MAX_STRLEN+1]; // this will hold the recieved string
-
-char received;
-
-char getRx(void){
-	return received;
+//This function handles USART2 global interrupt request.
+void USART1_IRQHandler(void){	
+	USART1_comm();
+//	U1++;
 }
 
-uint16_t C = 0;
-uint16_t F = 0;
-
-uint8_t value[32] = {0};
-static uint8_t readChar = 0;
-static int index = 0;
-uint16_t levels = 0;
-uint32_t steps[10] = {0};
-uint32_t times[10] = {0};
-uint8_t newline = 'n';
-
-//This function handles USART2 global interrupt request.
-void USART2_IRQHandler(void)
-{	
-	int num = 0;
-	int i = 0;
-	// check if the USART1 receive interrupt flag was set
+void USART2_comm(){
+	uint32_t num = 0;
+	uint32_t i = 0;
+	// check if the USART2 receive interrupt flag was set
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET){
 		readChar = USART_ReceiveData(USART2);
+		USART_putchar(USART2, readChar);
 		
 		switch(readChar){
 			case 'c':
@@ -304,19 +408,29 @@ void USART2_IRQHandler(void)
 		if(readChar == newline){
 			if(value[1] == 'z'){
 				switch(value[0]){
-					case 'p': //Profile pts
-						num = 0;
-						i = 2;
-						while(value[i] != newline){
-							num *= 10;
-							num += value[i] - 0x30;
-							i++;
+					case 'p': //Profile
+						switch(value[2]){
+							case '0':
+								profile = 0;
+								break;
+							case '1':
+								profile = 1;
+								break;
+							case '2':
+								profile = 2;
+								break;
+							case '3':
+								profile = 3;
+								break;
+							default:
+								close_air();
+								close_gas();
+								profile = 4;
+								break;
 						}
-						levels = num;
-						GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
 						break;
-					case 's': //Steps
-						switch(value[3]){
+					case 'a': //Air
+						switch(value[2]){
 							case '0':
 								num = 0;
 								i = 3;
@@ -325,8 +439,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								steps[0] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								air_c[0] = num;
 								break;
 							case '1':
 								num = 0;
@@ -336,8 +449,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								steps[1] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								air_c[1] = num;
 								break;
 							case '2':
 								num = 0;
@@ -347,8 +459,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								steps[2] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								air_c[2] = num;
 								break;
 							case '3':
 								num = 0;
@@ -358,8 +469,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								steps[3] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								air_c[3] = num;
 								break;
 							case '4':
 								num = 0;
@@ -369,8 +479,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								steps[4] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								air_c[4] = num;
 								break;
 							case '5':
 								num = 0;
@@ -380,13 +489,76 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								steps[5] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								air_c[5] = num;
+								break;
+						}
+						break;
+					case 'g': //Gas
+						switch(value[2]){
+							case '0':
+								num = 0;
+								i = 3;
+								while(value[i] != newline){
+									num *= 10;
+									num += value[i] - 0x30;
+									i++;
+								}
+								gas_c[0] = num;
+								break;
+							case '1':
+								num = 0;
+								i = 3;
+								while(value[i] != newline){
+									num *= 10;
+									num += value[i] - 0x30;
+									i++;
+								}
+								gas_c[1] = num;
+								break;
+							case '2':
+								num = 0;
+								i = 3;
+								while(value[i] != newline){
+									num *= 10;
+									num += value[i] - 0x30;
+									i++;
+								}
+								gas_c[2] = num;
+								break;
+							case '3':
+								num = 0;
+								i = 3;
+								while(value[i] != newline){
+									num *= 10;
+									num += value[i] - 0x30;
+									i++;
+								}
+								gas_c[3] = num;
+								break;
+							case '4':
+								num = 0;
+								i = 3;
+								while(value[i] != newline){
+									num *= 10;
+									num += value[i] - 0x30;
+									i++;
+								}
+								gas_c[4] = num;
+								break;
+							case '5':
+								num = 0;
+								i = 3;
+								while(value[i] != newline){
+									num *= 10;
+									num += value[i] - 0x30;
+									i++;
+								}
+								gas_c[5] = num;
 								break;
 						}
 						break;
 					case 't': //Time
-						switch(value[3]){
+						switch(value[2]){
 							case '0':
 								num = 0;
 								i = 3;
@@ -395,8 +567,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								times[0] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								time_c[0] = num;
 								break;
 							case '1':
 								num = 0;
@@ -406,8 +577,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								times[1] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								time_c[1] = num;
 								break;
 							case '2':
 								num = 0;
@@ -417,8 +587,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								times[2] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								time_c[2] = num;
 								break;
 							case '3':
 								num = 0;
@@ -428,8 +597,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								times[3] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								time_c[3] = num;
 								break;
 							case '4':
 								num = 0;
@@ -439,8 +607,7 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								times[4] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								time_c[4] = num;
 								break;
 							case '5':
 								num = 0;
@@ -450,23 +617,19 @@ void USART2_IRQHandler(void)
 									num += value[i] - 0x30;
 									i++;
 								}
-								times[5] = num;
-								GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_SET);
+								time_c[5] = num;
 								break;
 						}
 						break;
-					case 'g': //Go
-						//START SHIT
+					case 's': //Go
 						go = 1;
-						GPIO_WriteBit(GPIOC, GPIO_Pin_9, Bit_SET);
+						open_air();
+						open_gas();
 						break;
 					case 'x': //No
-						//STAHP SHIT
-						go = 0;
-						GPIO_WriteBit(GPIOC, GPIO_Pin_9, Bit_RESET);
-						break;
-					case 'd': //for debug to reset LED
-						GPIO_WriteBit(GPIOC, GPIO_Pin_8, Bit_RESET);
+						close_air();
+						close_gas();
+						set_time_zero(profile);
 						break;
 				}
 			}
@@ -476,48 +639,11 @@ void USART2_IRQHandler(void)
 	}
 }
 
+//This function handles USART2 global interrupt request.
+void USART2_IRQHandler(void){	
+	USART2_comm();
+//	U2++;
+}
 
 
-////This function handles USART2 global interrupt request.
-//void USART1_IRQHandler(void)
-//{	
-//	// check if the USART1 receive interrupt flag was set
-//	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET){
-//		USART_putchar(USART2,	USART_ReceiveData(USART1)); //For testing use ONLY
-//		
-//		switch(USART_ReceiveData(USART1)){
-//			case 'w': // Step OPEN air
-//				set_dir_air(0);
-//				step_air(1);
-//				break;
-//			case 's': //Step CLOSE air
-//				set_dir_air(1);
-//				step_air(1);
-//				break;
-//			case 'e': // Step OPEN gas
-//				set_dir_gas(0);
-//				step_gas(1);
-//				break;
-//			case 'd': // Step CLOSE gas
-//				set_dir_gas(1);
-//				step_gas(1);
-//				break;
-//			case 'o':	//open DC valves
-//				open_air();
-//				open_gas();
-//				break;
-//			case 'p':	//close DC valves
-//				close_air();
-//				close_gas();
-//				break;
-//			case '\r': //enter
-//				
-//				break;
-//			case '\b': //backspace
-//				
-//				break;
-//			default:
-//				break;
-//		}
-//	}
-//}
+
