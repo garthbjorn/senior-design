@@ -98,7 +98,7 @@ clean:
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size "mainController.axf"; arm-none-eabi-objcopy -O binary "mainController.axf" "mainController.bin" ; # checksum -p LPC4088 -d "mainController.bin";
+	-arm-none-eabi-size "mainController.axf" ; arm-none-eabi-objcopy -O binary "mainController.axf" "mainController.bin" ; arm-none-eabi-objcopy -O ihex "mainController.axf" "mainController.hex" ; # checksum -p LPC4088 -d "mainController.bin"
 	-@echo ' '
 
 .PHONY: all clean dependents
