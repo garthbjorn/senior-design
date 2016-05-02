@@ -1,16 +1,27 @@
+/*
+*	f0_adc.c
+* 
+* This module facilitates ADC read for Temperature
+*
+* Author: Wesley Butler
+*/
 
 #include "stm32f0xx_gpio.h"
 #include "stm32f0xx_rcc.h"
 #include "stm32f0xx_adc.h"
-#include "display.h"
-#include "f0_usart.h"
 
 uint16_t ADC1ConvertedValue;
 
+/*
+*	Returns ADC read value
+*/
 uint16_t ADCvalue(){
 	return ADC1ConvertedValue;
 }
 
+/*
+*	Reads ADC pin
+*/
 void adc_convert(void){
 	  /* Test EOC flag */
 		while (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
@@ -19,6 +30,9 @@ void adc_convert(void){
 		ADC1ConvertedValue = ADC_GetConversionValue(ADC1);
 }
 
+/*
+*	Configures ADC GPIO
+*/
 void ADC_GPIO_Config(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -31,6 +45,9 @@ void ADC_GPIO_Config(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
+/*
+*	Configures ADC operation
+*/
 void ADC1_Config(void)
 {
 	ADC_InitTypeDef ADC_InitStructure;
@@ -69,6 +86,9 @@ void ADC1_Config(void)
 	ADC_StartOfConversion(ADC1);
 }
 
+/*
+*	Sets up ADC
+*/
 void adc_f0_init(void)
 {
 	ADC_GPIO_Config();

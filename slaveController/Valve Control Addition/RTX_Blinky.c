@@ -1,3 +1,17 @@
+/*
+*	RTX_Blinky.c (MAIN)
+* 
+* The following program keeps track of which profile, if
+* any, is currently in operation as well as performs
+* periodic ADC temperature reads.
+*
+*	Pending functionality: 
+*			Include ADC interrupt so that temperatures may be
+*			updated during profile execution
+* 			
+*
+* Author: Wesley Butler/Garth Cline
+*/
 
 #include "stm32f0xx_gpio.h"
 #include "stm32f0xx_rcc.h"
@@ -8,6 +22,9 @@
 #include "f0_adc.h"
 #include "valves.h"
 
+/*
+* Local variables
+*/
 uint8_t go = 0;
 uint8_t prof = 4;
 uint8_t test = 0;
@@ -43,7 +60,7 @@ int main()
 					break;
 			}
 			fix_time(prof);
-			while(go); //Wait until someone presses STOP
+			while(go); //Wait until STOP is pressed on Main Control
 		}else{
 			close_air();
 			close_gas();
@@ -52,15 +69,3 @@ int main()
 		adc_convert();
 	}
 }
-
-
-
-
-//		if(U1 > 0){
-//			USART1_comm();
-//			U1--;
-//		}
-//		if(U2 > 0){
-//			USART2_comm();
-//			U2--;
-//		}

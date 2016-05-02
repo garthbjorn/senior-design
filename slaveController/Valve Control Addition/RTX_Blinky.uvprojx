@@ -391,11 +391,6 @@
               <FilePath>.\f0_usart.h</FilePath>
             </File>
             <File>
-              <FileName>vt100.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\vt100.h</FilePath>
-            </File>
-            <File>
               <FileName>stm32f0xx_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\stm32f0xx_adc.c</FilePath>
@@ -459,11 +454,6 @@
               <FileName>f0_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\f0_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>display.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\display.c</FilePath>
             </File>
             <File>
               <FileName>stm32f0xx_misc.c</FileName>

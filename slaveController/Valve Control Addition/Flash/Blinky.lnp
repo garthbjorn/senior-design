@@ -7,7 +7,6 @@
 ".\flash\stm32f0xx_tim.o"
 ".\flash\stm32f0xx_usart.o"
 ".\flash\f0_adc.o"
-".\flash\display.o"
 ".\flash\stm32f0xx_misc.o"
 ".\flash\valves.o"
 ".\flash\buttons_stm32f051-discovery.o"

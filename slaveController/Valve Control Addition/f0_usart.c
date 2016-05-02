@@ -1,3 +1,17 @@
+/*
+*	f0_usart.c
+* 
+* This module facilitates both Standard Operation Protocol and 
+* Advanced User Protocol on associated USART recieve.
+*
+*	Pending functionality: 
+*			For Advanced Users Protocol, allow execution of stepping
+*			commands outside of interrupt code. If a valve is being 
+*			stepped and there are more USART interrupts the program
+* 		will freeze.
+*
+* Author: Wesley Butler/Garth Cline
+*/
 
 #include "stm32f0xx_gpio.h"
 #include "stm32f0xx_usart.h"
@@ -10,32 +24,36 @@
 #include "valves.h"
 
 extern uint8_t go;
-extern uint8_t U1;
-extern uint8_t U2;
-
-uint8_t value1[32] = {0};
-static uint8_t readChar1 = 0;
-static int index1 = 0;
-uint8_t ret = '\r';
-
 uint16_t C = 0;
 uint16_t F = 0;
-
 uint8_t value[32] = {0};
 static uint8_t readChar = 0;
 static int index = 0;
-uint16_t levels = 0;
+uint8_t value1[32] = {0};
+static uint8_t readChar1 = 0;
+static int index1 = 0;
 extern int air_c[6];
 extern int gas_c[6];
 extern int time_c[6];
 extern int temp[7];
 uint8_t profile;
+uint8_t ret = '\r';
 uint8_t newline = '\n';
 
+/*
+* Returns whether to run profiles
+* 
+* @return start condition
+*/
 uint8_t run(void){
 	return go;
 }
 
+/*
+* Returns active profile
+* 
+* @return current profile
+*/
 uint8_t currProfile(void){
 	return profile;
 }
@@ -50,6 +68,9 @@ char getRx(void){
 	return received;
 }
 
+/*
+* USART initialization for F0
+*/
 void usart_f0_init(){
 	NVIC_USART1_Configure();
 	NVIC_USART2_Configure();
@@ -58,6 +79,9 @@ void usart_f0_init(){
 	USART_GPIO();
 }
 
+/*
+* NVIC for USART1 operation setup
+*/
 void NVIC_USART1_Configure(){
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
@@ -67,6 +91,9 @@ void NVIC_USART1_Configure(){
   NVIC_Init(&NVIC_InitStructure);
 }
 
+/*
+* NVIC for USART2 operation setup
+*/
 void NVIC_USART2_Configure(){
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
@@ -76,6 +103,9 @@ void NVIC_USART2_Configure(){
   NVIC_Init(&NVIC_InitStructure);
 }
 
+/*
+* USART1 operation setup
+*/
 void USART1_Configure(){
 	USART_InitTypeDef USART_InitStructure;
 	
@@ -93,6 +123,9 @@ void USART1_Configure(){
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 }
 
+/*
+* USART2 operation setup
+*/
 void USART2_Configure(){
 	USART_InitTypeDef USART_InitStructure;
 	
@@ -110,6 +143,9 @@ void USART2_Configure(){
 	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 }
 
+/*
+* USART1 and USART2 GPIO configuration
+*/
 void USART_GPIO(){
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -130,18 +166,36 @@ void USART_GPIO(){
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
+/*
+* Sends temperature in C USART
+* 
+* @param USART terminal
+* @param Temperature to print
+*/
 void USART_PUT_TEMPC(USART_TypeDef* USARTx, uint32_t t){
 		USART_putchar(USARTx, 'c');
 		USART_putnum(USARTx, t);
 		USART_putchar(USARTx, 'n');
 }	
 
+/*
+* Sends temperature in F USART
+* 
+* @param USART terminal
+* @param Temperature to print
+*/
 void USART_PUT_TEMPF(USART_TypeDef* USARTx, uint32_t t){
 		USART_putchar(USARTx, 'f');
 		USART_putnum(USARTx, t);
 		USART_putchar(USARTx, 'n');
 }	
 
+/*
+* Prints numbers using USART
+* 
+* @param USART terminal
+* @param Number to print
+*/
 void USART_putnum(USART_TypeDef* USARTx, uint32_t x){
 	char value[10]; //a temp array to hold results of conversion
 	int i = 0; //loop index
@@ -158,18 +212,33 @@ void USART_putnum(USART_TypeDef* USARTx, uint32_t x){
 	}
 }
 
+/*
+* Prints characters using USART
+* 
+* @param USART terminal
+* @param Character to print
+*/
 void USART_putchar(USART_TypeDef* USARTx, char c){
 	//while (!(USARTx->ISR & 0x00000040));
 	while(USART_GetFlagStatus(USARTx,USART_FLAG_TXE)!=SET);
 		USART_SendData(USARTx, c);
 }
 
+/*
+* Prints strings using USART
+* 
+* @param USART terminal
+* @param String to print
+*/
 void USART_puts(USART_TypeDef* USARTx, volatile char * s) {
 	while (*s) {
 		USART_putchar(USARTx, *s++);
 	}
 }
 
+/*
+* Facilitates Advanced User Protocol
+*/
 void USART1_comm(){
 	int num = 0;
 	int num2 = 0;
@@ -201,7 +270,16 @@ void USART1_comm(){
 		value1[index1++] = readChar1;
 		if(readChar1 == '\r'){
 			switch(value1[0]){
-				case 'a': //Air
+				/* Air program
+				*	a[d][#]\r
+				* Steps the valve position of air.
+				*		d: direction [p,n]
+				*			p = positive (open)
+				*			n = negative (close)
+				*		#: steps (positive integer)
+				*		\r: ENTER key
+				*/
+				case 'a':
 					switch(value1[1]){
 						case 'p':
 							set_dir_air(0);
@@ -231,7 +309,16 @@ void USART1_comm(){
 							break;
 					}
 					break;
-				case 'g': //Gas
+				/* Gas program
+				*	g[d][#]\r
+				* Steps the valve position of gas.
+				*		d: direction [p,n]
+				*			p = positive (open)
+				*			n = negative (close)
+				*		#: steps (positive integer)
+				*		\r: ENTER key
+				*/
+				case 'g':
 					switch(value1[1]){
 						case 'p':
 							set_dir_gas(0);
@@ -261,6 +348,17 @@ void USART1_comm(){
 							break;
 					}
 					break;
+				/* Air and gas program
+				*	b[d1][d2][#1].[#2]\r
+				* Steps the valve position of air and gas together.
+				*		d1: air direction [p,n]
+				*		d2: gas direction [p,n]
+				*			p = positive (open)
+				*			n = negative (close)
+				*		#1: air steps (positive integer)
+				*		#2: gas steps (positive integer)
+				*		\r: ENTER key
+				*/
 				case 'b':
 					switch(value1[1]){
 						case 'p':
@@ -353,7 +451,16 @@ void USART1_comm(){
 							break;
 					}
 					break;
-				case 'p':
+				/* Run Profile
+				*	p[n]\r
+				*		n: profile [0-4]
+				*			0 = custom profile
+				*			1 = profile 1
+				*			2 = profile 2
+				*			3 = profile 3
+				*		\r: ENTER key
+				*/
+				case 'p': //Run profile
 					switch(value1[1]){
 						case '0':
 							profile_custom();
@@ -378,13 +485,17 @@ void USART1_comm(){
 	}
 }
 
-//This function handles USART2 global interrupt request.
+/*
+* Handles USART1 global interrupt request.
+*/
 void USART1_IRQHandler(void){	
 	USART1_comm();
-//	U1++;
 }
 
-void USART2_comm(){
+/*
+* Facilitates Standard Protocol
+*/
+void USART2_comm(void){
 	uint32_t num = 0;
 	uint32_t i = 0;
 	// check if the USART2 receive interrupt flag was set
@@ -429,7 +540,7 @@ void USART2_comm(){
 								break;
 						}
 						break;
-					case 'a': //Air
+					case 'a': //Air custom
 						switch(value[2]){
 							case '0':
 								num = 0;
@@ -493,7 +604,7 @@ void USART2_comm(){
 								break;
 						}
 						break;
-					case 'g': //Gas
+					case 'g': //Gas custom
 						switch(value[2]){
 							case '0':
 								num = 0;
@@ -557,7 +668,7 @@ void USART2_comm(){
 								break;
 						}
 						break;
-					case 't': //Time
+					case 't': //Time custom
 						switch(value[2]){
 							case '0':
 								num = 0;
@@ -639,10 +750,11 @@ void USART2_comm(){
 	}
 }
 
-//This function handles USART2 global interrupt request.
+/*
+* Handles USART2 global interrupt request.
+*/
 void USART2_IRQHandler(void){	
 	USART2_comm();
-//	U2++;
 }
 
 

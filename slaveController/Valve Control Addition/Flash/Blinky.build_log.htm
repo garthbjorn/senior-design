@@ -27,7 +27,23 @@ Project File Date:  04/18/2016
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'STM32F051 Flash'
-".\Flash\Blinky.axf" - 0 Error(s), 0 Warning(s).
+compiling stm32f0xx_gpio.c...
+compiling RTX_Blinky.c...
+compiling f0_usart.c...
+compiling f0_adc.c...
+compiling valves.c...
+valves.c(253): warning:  #188-D: enumerated type mixed with another type
+  		GPIO_WriteBit(
+PIOB, 
+PIO_Pin_6, dir);	// Configure DIR pin
+valves.c(271): warning:  #188-D: enumerated type mixed with another type
+  		GPIO_WriteBit(
+PIOB, 
+PIO_Pin_4, dir);	
+valves.c: 2 warnings, 0 errors
+linking...
+Program Size: Code=16728 RO-data=312 RW-data=384 ZI-data=2504  
+".\Flash\Blinky.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -98,7 +114,7 @@ Package Vendor: Keil
 
    * Component: Keil.STM32F051-Discovery::Board Support:Buttons:1.0.0
       Source file:   Boards\ST\STM32F051-Discovery\Common\Buttons_STM32F051-Discovery.c
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:05
 </pre>
 </body>
 </html>

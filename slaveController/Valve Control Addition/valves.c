@@ -1,3 +1,14 @@
+/*
+*	valves.c
+* 
+* This module facilitates valve operation for both shutoff and
+*	 stepper valves.
+*
+*	Pending functionality: 
+*			
+*
+* Author: Wesley Butler
+*/
 
 #include "stm32f0xx_gpio.h"
 #include "stm32f0xx_rcc.h"
@@ -19,11 +30,21 @@ int gas_3[6] = {1500, 3000, 0, 2500, 1000, 1000};
 int time_3[5] = {3, 2, 780, 60, 30};
 int temp[7] = {0};
 
+/*
+*	Delay. 1 second = 1920000 counts
+* 
+* @param counts
+*/
 void Delay(__IO uint32_t nCount) {
   while(nCount-- && run()) {
   }
 }
 
+/*
+*	Sets all times to zero for the current profile. Executed under a STOP condition.
+* 
+* @param current profile
+*/
 void set_time_zero(uint8_t profile){
 	uint32_t i = 0;
 	switch(profile){
@@ -56,6 +77,11 @@ void set_time_zero(uint8_t profile){
 	}
 }
 
+/*
+*	Fixes time values if set_time_zero is used.
+* 
+* @param current profile
+*/
 void fix_time(uint8_t profile){
 	uint32_t i = 0;
 	switch(profile){
@@ -84,9 +110,12 @@ void fix_time(uint8_t profile){
 	}
 }
 
-/* It is the responsibility of the user to ensure that 
-		a profile begins and ends with air at 4 lpm and gas
-		at 2 ft3/hr */
+/* 
+* Runs Custom Profile.
+* It is the responsibility of the user to ensure that 
+* 	a profile begins and ends with air at 4 lpm and gas
+* 	at 2 ft3/hr 
+*/
 void profile_custom(void){
 	int i;
 	for(i=0; i<6; i++){
@@ -97,38 +126,27 @@ void profile_custom(void){
 	/* warm up */
 	set_dir_air(0);
 	set_dir_gas(0);
-	USART_putnum(USART2, 20*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(20*delay_factor); //20 seconds. This is where you light the gas
 	step_both(air_c[0],gas_c[0]);
-	USART_putnum(USART2, time_c[0]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_c[0]*delay_factor);
 	step_both(air_c[1],gas_c[1]);
-	USART_putnum(USART2, time_c[1]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_c[1]*delay_factor);
 	/* cool down */
 	set_dir_air(1);
 	set_dir_gas(1);
 	step_both(air_c[2],gas_c[2]);
-	USART_putnum(USART2, time_c[2]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_c[2]*delay_factor);
 	step_both(air_c[3],gas_c[3]);
-	USART_putnum(USART2, time_c[3]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_c[3]*delay_factor);
 	step_both(air_c[4],gas_c[4]);
-	USART_putnum(USART2, time_c[4]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_c[4]*delay_factor);
 	step_both(air_c[5],gas_c[5]);
-	USART_putnum(USART2, time_c[5]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_c[5]*delay_factor);
 }
 
+/* 
+* Runs Profile 1 
+*/
 void profile1(void){
 	int i;
 	for(i=0; i<7; i++){
@@ -139,42 +157,29 @@ void profile1(void){
 	set_dir_air(0);
 	set_dir_gas(0);
 	//step_both(350,800);
-	USART_putnum(USART2, 20*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(20*delay_factor); //20 seconds
 	step_both(air_1[0],gas_1[0]);
-	USART_putnum(USART2, time_1[0]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_1[0]*delay_factor); //3 seconds
 	step_both(air_1[1],gas_1[1]);
-	USART_putnum(USART2, time_1[1]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_1[1]*delay_factor); //2 seconds
 	step_both(air_1[2],gas_1[2]);
-	USART_putnum(USART2, time_1[2]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_1[2]*delay_factor); //13 minutes
 	set_dir_air(1);
 	set_dir_gas(1);
 	step_both(air_1[3],gas_1[3]);
-	USART_putnum(USART2, time_1[3]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_1[3]*delay_factor); //30 seconds
 	step_both(air_1[4],gas_1[4]);
-	USART_putnum(USART2, time_1[4]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_1[4]*delay_factor); //30 seconds
 	step_both(air_1[5],gas_1[5]);
-	USART_putnum(USART2, time_1[5]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_1[5]*delay_factor); //30 seconds
 	step_both(air_1[6],gas_1[6]);
-	USART_putnum(USART2, time_1[6]*delay_factor);
-	USART_puts(USART2, "\r\n");
 	Delay(time_1[6]*delay_factor); //30 seconds
 	step_both(air_1[7],gas_1[7]);
 }
 
+/* 
+* Runs Profile 2
+*/
 void profile2(void){
 	int i;
 	for(i=0; i<6; i++){
@@ -203,6 +208,9 @@ void profile2(void){
 	step_both(air_2[6],gas_2[6]);
 }
 
+/* 
+* Runs Profile 3 
+*/
 void profile3(void){
 	int i;
 	for(i=0; i<5; i++){
@@ -229,6 +237,7 @@ void profile3(void){
 	step_both(air_3[5],gas_3[5]);
 }
 
+
 void open_air(){
 		GPIO_WriteBit(GPIOC, GPIO_Pin_9, Bit_RESET);
 }
@@ -247,42 +256,64 @@ void close_gas(){
 
 static uint8_t stepper_res = 2;//16;
 
-/* Configure DIR pin. 0 = open, 1 = close */
+/* 
+* Configure DIR pin for air.
+*
+* @param direction (1 = close, 0 = open)
+*/
 void set_dir_air(uint8_t dir){
 		dir = dir&0x1;
 		GPIO_WriteBit(GPIOB, GPIO_Pin_6, dir);	// Configure DIR pin
 }
 
-/* 1 step = 1/16 of a step (400 full steps total) */
+/* 
+* Program steps for air.
+*
+* @param number of steps
+*/
 void step_air(uint16_t num){
 		uint16_t i=0;
 		for(i=0; i<num; i++){
 			/* Send pulses to STEP */
 			GPIO_WriteBit(GPIOB, GPIO_Pin_7, Bit_SET);
-			Delay(50); //5 = apx. 2 us
+			Delay(50);
 			GPIO_WriteBit(GPIOB, GPIO_Pin_7, Bit_RESET);
-			Delay(3600);	//8000 = apx. 588Hz ... 10000 = apx 472Hz
+			Delay(3600);	
 		}
 }
 
-/* Configure DIR pin. 0 = open, 1 = close */
+/* 
+* Configure DIR pin for gas.
+*
+* @param direction (1 = close, 0 = open)
+*/
 void set_dir_gas(uint8_t dir){
 		dir = dir&0x1;
 		GPIO_WriteBit(GPIOB, GPIO_Pin_4, dir);	
 }
 
-/* 1 step = 1/16 of a step (400 full steps total) */
+/* 
+* Program steps for gas.
+*
+* @param number of steps
+*/
 void step_gas(uint16_t num){	
 		uint16_t i=0;
 		for(i=0; i<num; i++){
 			/* Send pulses to STEP */
 			GPIO_WriteBit(GPIOB, GPIO_Pin_5, Bit_SET);
-			Delay(50);			//5 = apx. 2 us
+			Delay(50);
 			GPIO_WriteBit(GPIOB, GPIO_Pin_5, Bit_RESET);
-			Delay(3600);	//8000 = apx. 588Hz ... 10000 = apx 472Hz
+			Delay(3600);
 		}
 }
 
+/* 
+* Program steps for air and gas.
+*
+* @param number of steps for air
+* @param number of steps for gas
+*/
 void step_both(uint16_t air, uint16_t gas){
 		uint16_t i = 0;
 		uint16_t max = 0;
@@ -298,6 +329,9 @@ void step_both(uint16_t air, uint16_t gas){
 		else step_gas(gas-max);
 }
 
+/* NOT USED
+* Reset stepper valves.
+*/
 void stepper_reset(void){
 		uint16_t i = 0;
 		close_air();
@@ -308,10 +342,13 @@ void stepper_reset(void){
 			//Do these a bunch until sure that valve is closed (400*resolution = max)
 			step_air(1);
 			step_gas(1);
-			Delay(8000); //8000 = apx. 588Hz ... 10000 = apx 472Hz
+			Delay(3600);
 		}
 }
 
+/* 
+* Initialize valve GPIO
+*/
 void Valve_GPIO_Init(void){
 		GPIO_InitTypeDef GPIO_InitStructure1;
 		GPIO_InitTypeDef GPIO_InitStructure2;
@@ -337,11 +374,12 @@ void Valve_GPIO_Init(void){
 		GPIO_Init(GPIOC, &GPIO_InitStructure2);
 }
 
+/* 
+* Setup valves
+*/
 void valve_init(){
 		Valve_GPIO_Init();
 		//stepper_reset();
-		//open_air();
-		//open_gas();
 		close_air();
 		close_gas();
 		set_dir_air(1);
